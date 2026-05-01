@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas of the Heart — Emotion Guide (Dark)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg-base:#0d0d0d; --bg-surface:#161616; --bg-raised:#1e1e1e;
+    --border:rgba(255,255,255,0.07); --border-mid:rgba(255,255,255,0.12); --border-strong:rgba(255,255,255,0.18);
+    --text-primary:#f0ede8; --text-secondary:#8a8680; --text-muted:#555250;
+    --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    --font-sans:'DM Sans',system-ui,sans-serif; --font-mono:'DM Mono','Courier New',monospace;
+  }
+  html,body{background:var(--bg-base);color-scheme:dark;}
+  body{font-family:var(--font-sans);color:var(--text-primary);min-height:100vh;line-height:1.6;}
+  .page-wrap{max-width:920px;margin:0 auto;padding:3rem 2rem 5rem;}
+
+  /* HEADER */
+  .page-header{margin-bottom:2rem;padding-bottom:2rem;border-bottom:0.5px solid var(--border-mid);}
+  .page-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.6rem;}
+  .page-title{font-size:clamp(22px,4vw,34px);font-weight:300;letter-spacing:-.02em;line-height:1.2;margin-bottom:.7rem;}
+  .page-title strong{font-weight:500;}
+  .page-desc{font-size:14px;color:var(--text-secondary);max-width:620px;line-height:1.7;}
+  .page-desc em{font-style:italic;}
+
+  /* FILTERS */
+  .filter-wrap{margin-bottom:1.5rem;}
+  .filter-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+  .filter-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .filter-btn{font-family:var(--font-sans);font-size:12px;padding:5px 13px;border-radius:99px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .15s;}
+  .filter-btn:hover{background:var(--bg-surface);color:var(--text-primary);}
+  .filter-btn.active{background:var(--bg-raised);color:var(--text-primary);font-weight:500;}
+
+  /* GRID */
+  .emo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;margin-bottom:10px;}
+  .emo-card{background:var(--bg-surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;overflow:hidden;text-align:left;font-family:var(--font-sans);transition:transform .12s,border-color .15s,background .12s;}
+  .emo-card:hover{background:var(--bg-raised);transform:translateY(-2px);}
+  .emo-card.active{background:var(--bg-raised);border-width:1px;}
+  .emo-accent{height:4px;width:100%;}
+  .emo-body{padding:11px 13px 13px;}
+  .emo-name{font-size:13.5px;font-weight:500;color:var(--text-primary);margin-bottom:3px;}
+  .emo-tagline{font-size:11px;color:var(--text-secondary);line-height:1.4;}
+
+  /* DETAIL */
+  .detail-panel{background:var(--bg-surface);border:0.5px solid var(--border-strong);border-radius:var(--radius-xl);padding:1.5rem;margin:4px 0 1.5rem;display:none;}
+  .detail-panel.visible{display:block;animation:slideIn .2s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+  .detail-header{display:flex;align-items:flex-start;gap:12px;padding-bottom:1rem;margin-bottom:1rem;border-bottom:0.5px solid var(--border);}
+  .detail-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:8px;}
+  .detail-chapter{font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px;}
+  .detail-title{font-size:19px;font-weight:500;color:var(--text-primary);margin-bottom:3px;letter-spacing:-.01em;}
+  .detail-subtitle{font-size:13px;color:var(--text-secondary);}
+  .detail-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+  .detail-block{background:var(--bg-base);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:13px;}
+  .block-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+  .block-text{font-size:13px;color:var(--text-secondary);line-height:1.65;}
+  .block-text ul{padding-left:16px;}
+  .block-text li{margin-bottom:5px;}
+  .avoid-block{border-left:2px solid rgba(220,80,80,.5);border-radius:0 var(--radius-md) var(--radius-md) 0;}
+  .avoid-label{color:rgba(220,100,100,.8)!important;}
+
+  /* FOOTER */
+  .footer{margin-top:3rem;padding-top:1.25rem;border-top:0.5px solid var(--border);font-size:12px;color:var(--text-muted);line-height:1.6;}
+  .footer em{font-style:italic;}
+
+  @media(max-width:520px){
+    .page-wrap{padding:1.5rem 1rem 3rem;}
+    .emo-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+    .detail-cols{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header class="page-header">
+    <p class="page-eyebrow">Psychology &mdash; Brené Brown (2021)</p>
+    <h1 class="page-title"><em>Atlas of the Heart</em> &mdash; <strong>Emotion Signal Guide</strong></h1>
+    <p class="page-desc">Brené Brown mapped 87 emotions and experiences across 13 chapters in <em>Atlas of the Heart</em>. Each carries a specific signal. Learning to name, read, and respond to them is where emotional intelligence begins. Select any card to explore what it communicates and how to work with it effectively.</p>
+  </header>
+
+  <div class="filter-wrap">
+    <p class="filter-label">Filter by chapter</p>
+    <div class="filter-row" id="filters">
+      <button class="filter-btn active" data-filter="all">All emotions</button>
+      <button class="filter-btn" data-filter="uncertainty">Ch.1 · Uncertainty &amp; Fear</button>
+      <button class="filter-btn" data-filter="comparison">Ch.2 · Comparison</button>
+      <button class="filter-btn" data-filter="unplanned">Ch.3 · When Plans Fail</button>
+      <button class="filter-btn" data-filter="beyond">Ch.4 · Awe &amp; Wonder</button>
+      <button class="filter-btn" data-filter="not-as-they-seem">Ch.5 · Not What They Seem</button>
+      <button class="filter-btn" data-filter="hurting">Ch.6 · Hurting &amp; Grief</button>
+      <button class="filter-btn" data-filter="with-others">Ch.7 · With Others</button>
+      <button class="filter-btn" data-filter="falling-short">Ch.8 · Falling Short</button>
+      <button class="filter-btn" data-filter="connection">Ch.9 · Seeking Connection</button>
+      <button class="filter-btn" data-filter="heart-open">Ch.10 · Heart Open</button>
+      <button class="filter-btn" data-filter="life-good">Ch.11 · Life is Good</button>
+      <button class="filter-btn" data-filter="wronged">Ch.12 · Wronged &amp; Anger</button>
+      <button class="filter-btn" data-filter="self-assess">Ch.13 · Self-Assessment</button>
+    </div>
+  </div>
+
+  <div class="emo-grid" id="grid"></div>
+  <div class="detail-panel" id="detail"></div>
+
+  <footer class="footer">
+    Based on <em>Atlas of the Heart</em> by Brené Brown (2021). Emotions are signals, not commands. Language is the first step toward understanding.
+  </footer>
+</div>
+
+<script>
+const E = [
+  // CH 1 · UNCERTAINTY & FEAR
+  {id:"stress",name:"Stress",ch:"Ch. 1 · Uncertainty & Fear",tag:"Demands exceed perceived resources",cat:"uncertainty",color:"#C0522A",
+   signal:"Stress arises when demands outpace your perceived ability to cope — a load alarm, not a verdict on your capability. Brown notes stress and overwhelm are often conflated but are distinct states.",
+   strats:["Name what specifically feels overwhelming — vague stress is harder to address","Identify one thing within your control and act on it","Break demands into smaller completable units","Attend to basic regulation: sleep, movement, breath"],
+   avoid:"Pushing through indefinitely — chronic unaddressed stress degrades judgment, health, and relationships."},
+
+  {id:"overwhelm",name:"Overwhelm",ch:"Ch. 1 · Uncertainty & Fear",tag:"You've hit a genuine capacity ceiling",cat:"uncertainty",color:"#B84A1F",
+   signal:"Overwhelm is an extreme level of stress where you feel completely unable to function. Unlike stress (demands are high), overwhelm means the system has genuinely maxed out and cannot process more input effectively.",
+   strats:["Stop adding — refuse new input until there is space","Triage: what must happen today vs. what can wait?","Ask for help explicitly, not vaguely","Restore a small sense of order in one visible area"],
+   avoid:"Soldiering on — overwhelm is not a mindset problem. Pushing harder when genuinely maxed out makes things worse."},
+
+  {id:"anxiety",name:"Anxiety",ch:"Ch. 1 · Uncertainty & Fear",tag:"Uncertainty about the future",cat:"uncertainty",color:"#BA7517",
+   signal:"Brown distinguishes anxiety from fear: anxiety is future-oriented uncertainty, often about things that haven't happened and may never happen. It's the mind scanning for threats that aren't yet present.",
+   strats:["Ask: is this a real threat or an imagined one?","Separate what is in your control from what isn't","Take one concrete preparatory action","Practice tolerating uncertainty — not all of it can be resolved"],
+   avoid:"Ruminating on worst-case scenarios without action, or avoiding the situation — both amplify anxiety."},
+
+  {id:"worry",name:"Worry",ch:"Ch. 1 · Uncertainty & Fear",tag:"A repetitive 'what if' loop",cat:"uncertainty",color:"#A86D15",
+   signal:"Worry is the cognitive component of anxiety — a chain of repetitive 'what if' thinking. It signals something you care about feels at risk. Brown notes worry can become a way of trying to feel in control.",
+   strats:["Schedule a 'worry window' to contain it rather than letting it run all day","Write the worry down to externalize it","Ask: what is the most likely outcome, not just the worst case?","Shift from worry to problem-solving: what can I actually do?"],
+   avoid:"Treating worry as useful preparation — research shows it rarely solves problems and mostly drains energy."},
+
+  {id:"avoidance",name:"Avoidance",ch:"Ch. 1 · Uncertainty & Fear",tag:"Escaping discomfort by not engaging",cat:"uncertainty",color:"#8A5A2A",
+   signal:"Avoidance is the behavioral strategy used to manage anxiety and fear — by staying away from what triggers them. It provides short-term relief at the cost of long-term freedom and growth.",
+   strats:["Name what you are avoiding and why — clarity reduces avoidance's power","Make the avoided thing smaller and more approachable","Do one small exposure to what you're avoiding","Notice the gap between imagined and actual difficulty"],
+   avoid:"Treating the relief from avoidance as success — the relief is real but the problem grows. Avoidance is borrowed time."},
+
+  {id:"fear",name:"Fear",ch:"Ch. 1 · Uncertainty & Fear",tag:"A present threat needs a response",cat:"uncertainty",color:"#7F77DD",
+   signal:"Unlike anxiety (future-oriented), fear is about something present and specific. It mobilizes a fight, flight, or freeze response. Brown notes that naming fear is one of the most powerful tools for managing it.",
+   strats:["Name it specifically — 'I am afraid of X' is more manageable than a vague sense of dread","Distinguish real from imagined threats","Create a concrete response plan for the actual risk","Take one small courageous step toward what you're avoiding"],
+   avoid:"Chronic avoidance — fear that is never confronted tends to grow. Avoidance trains the brain to believe the threat is unmanageable."},
+
+  {id:"dread",name:"Dread",ch:"Ch. 1 · Uncertainty & Fear",tag:"Anticipating inevitable pain",cat:"uncertainty",color:"#6A5CB8",
+   signal:"Dread is the anticipation of something we believe will be painful, with certainty that it's coming. It combines fear with helplessness — we know it's coming and feel unable to stop it.",
+   strats:["Name it explicitly — dread loses power when spoken","Limit the time you spend in anticipatory suffering","Focus on what you can control in the preparation","Remind yourself you have survived hard things before"],
+   avoid:"Prolonged dwelling — you experience the pain twice if you suffer heavily before it happens. Dread is often worse than the event itself."},
+
+  {id:"excitement",name:"Excitement",ch:"Ch. 1 · Uncertainty & Fear",tag:"Energized anticipation of something good",cat:"uncertainty",color:"#D4871A",
+   signal:"Excitement shares the same physiological profile as anxiety — elevated heart rate, alertness — but is labeled positively. Brown notes we can intentionally reframe anxiety as excitement when facing a challenge.",
+   strats:["Channel the energy — excitement is fuel","Share it; expressed excitement amplifies connection","Stay grounded so it doesn't tip into recklessness","If tipping into anxiety, reframe: 'I'm excited' rather than 'I'm anxious'"],
+   avoid:"Suppressing excitement as 'too much' — it is a signal about what matters to you and carries important information."},
+
+  {id:"vulnerability",name:"Vulnerability",ch:"Ch. 1 · Uncertainty & Fear",tag:"Uncertainty, risk, and emotional exposure",cat:"uncertainty",color:"#9B6BB5",
+   signal:"Brown's landmark finding: vulnerability is not weakness — it is uncertainty, risk, and emotional exposure. It arises when something meaningful is at stake and the outcome isn't guaranteed. It is the prerequisite for connection, creativity, and courage.",
+   strats:["Recognize it as the birthplace of connection, creativity, and change","Choose who is worthy — not everyone has earned your vulnerability","Lean into it as the price of meaningful engagement","Separate vulnerability from oversharing — one is intentional, one is not"],
+   avoid:"Armoring up permanently — the armor keeps out pain but also blocks love, belonging, and joy. The cost is too high."},
+
+  // CH 2 · COMPARISON
+  {id:"comparison",name:"Comparison",ch:"Ch. 2 · Comparison",tag:"Measuring yourself against others",cat:"comparison",color:"#4A72A0",
+   signal:"Comparison is the act of measuring our circumstances or achievements against others. Brown notes it can drive conformity or drive disconnection — it is rarely neutral. It signals that belonging or adequacy feels uncertain.",
+   strats:["Notice when you're comparing and name it","Ask: what specifically am I measuring and why?","Use it as information about what you value, not a verdict on your worth","Redirect attention to your own effort and growth"],
+   avoid:"Making it a habit — constant comparison has no floor. There is always someone doing better on any given metric."},
+
+  {id:"admiration",name:"Admiration",ch:"Ch. 2 · Comparison",tag:"You see a quality worth honoring",cat:"comparison",color:"#3A8FB5",
+   signal:"Admiration is the feeling of respect and warm approval for someone's qualities or achievements. It is comparison's positive form — pointing toward what you value without the pain of deficiency.",
+   strats:["Tell the person — expressed admiration strengthens connection","Use it as a mirror: what does it reveal about your own values?","Let it pull you forward rather than make you feel behind","Distinguish admiration from idealization — admire the quality, not the whole person uncritically"],
+   avoid:"Pedestaling — placing someone so high that you lose sight of their full humanity, or worse, diminish your own."},
+
+  {id:"reverence",name:"Reverence",ch:"Ch. 2 · Comparison",tag:"Deep respect bordering on awe",cat:"comparison",color:"#2E7DA8",
+   signal:"Reverence is a deeper form of admiration — it combines respect with a sense of the sacred or extraordinary. Brown notes it is increasingly rare and worth cultivating deliberately in a cynical world.",
+   strats:["Practice it intentionally toward people and ideas that warrant it","Let it counteract cynicism and contempt","Use it to build a culture of genuine respect","Notice what you hold in reverence — it maps your deepest values"],
+   avoid:"Confusing reverence with subservience — deep respect for something doesn't require self-diminishment."},
+
+  {id:"envy",name:"Envy",ch:"Ch. 2 · Comparison",tag:"You want what someone else has",cat:"comparison",color:"#5B7FBB",
+   signal:"Envy involves wanting something another person has and feeling pain about not having it. Brown distinguishes envy from jealousy: envy is two-person (wanting), jealousy is three-person (fearing loss).",
+   strats:["Get specific: what exactly do you want that they have?","Let it clarify your goals rather than define your worth","Redirect the energy into motivated action on your own path","Distinguish envy (painful wanting) from admiration (inspired wanting)"],
+   avoid:"Letting envy curdle into resentment — it shifts focus from your growth to their perceived undeserving."},
+
+  {id:"jealousy",name:"Jealousy",ch:"Ch. 2 · Comparison",tag:"Fear of losing something to someone else",cat:"comparison",color:"#4A6FA5",
+   signal:"Jealousy involves three parties and the fear of losing something — a relationship, position, or connection — to another person. It signals a real attachment and a perceived threat to it.",
+   strats:["Name the specific thing you fear losing","Examine whether the threat is real or assumed","Communicate needs directly in the at-risk relationship","Address the underlying insecurity rather than controlling the situation"],
+   avoid:"Acting from jealousy without reflection — jealous behavior often creates the very rupture it fears."},
+
+  {id:"resentment",name:"Resentment",ch:"Ch. 2 · Comparison",tag:"Anger at perceived unfairness",cat:"comparison",color:"#7A5C3E",
+   signal:"Brown describes resentment as the feeling of bitterness when we believe someone has gotten something we haven't, or we've been asked to give more than is fair. It is almost always a sign of an unset or unspoken boundary.",
+   strats:["Ask: what boundary have I not set that needs setting?","Name the specific unfairness you're feeling","Have the conversation you've been avoiding","Examine if you've been giving beyond what you're willing to give"],
+   avoid:"Stewing silently — resentment grows in silence and rarely resolves without a direct conversation or changed behavior."},
+
+  {id:"contempt",name:"Contempt",ch:"Ch. 2 · Comparison",tag:"A sense of moral superiority over another",cat:"comparison",color:"#6B4C3B",
+   signal:"Contempt communicates 'I am better than you' and is one of the most corrosive interpersonal emotions. Gottman's research identifies it as the single strongest predictor of relationship dissolution.",
+   strats:["Recognize it as a relationship killer and treat it with urgency","Examine what unmet need or resentment is underneath it","Build a culture of appreciation to counteract contemptuous patterns","Seek to understand before judging"],
+   avoid:"Expressing it — contempt almost never achieves what it aims for and causes lasting damage to trust and connection."},
+
+  {id:"disgust",name:"Disgust",ch:"Ch. 2 · Comparison",tag:"A moral or physical violation detected",cat:"comparison",color:"#5C6B3A",
+   signal:"Disgust evolved to protect us from contamination but extends to moral violations. It involves a strong aversive reaction and signals a perceived breach of deeply held values.",
+   strats:["Pause before acting — disgust can distort moral judgment","Examine whether this is physical revulsion or a moral conflict","Separate the person from the behavior when relevant","Use it to clarify your values, not as permission to dehumanize"],
+   avoid:"Letting moral disgust slide into dehumanization — once people are seen as less than human, great harm becomes possible."},
+
+  {id:"dehumanization",name:"Dehumanization",ch:"Ch. 2 · Comparison",tag:"Seeing others as less than fully human",cat:"comparison",color:"#5A3A2A",
+   signal:"Dehumanization is the process of seeing and treating others as objects or inferior beings. Brown identifies it as one of the most dangerous human patterns — the precondition for violence, oppression, and atrocity.",
+   strats:["Recognize it in language and imagery — it often starts there","Counter it with specific humanizing information about the group or person","Challenge dehumanizing speech even when uncomfortable","Examine your own in-group/out-group thinking honestly"],
+   avoid:"Treating it as merely a strong opinion — dehumanization is not hyperbole. It has preceded every major atrocity in human history."},
+
+  {id:"hate",name:"Hate",ch:"Ch. 2 · Comparison",tag:"Intense hostility and aversion",cat:"comparison",color:"#7A2A2A",
+   signal:"Hate is characterized by intense hostility and aversion, usually toward a person or group. Brown examines how hate is sustained by dehumanization and the severing of connection from the shared humanity of those we hate.",
+   strats:["Examine what need or wound is fueling the intensity","Reconnect with the humanity of those you are hostile toward — even fractionally","Seek perspective from those who have moved through deep hatred toward forgiveness","Work with a professional if hate is consuming significant mental energy"],
+   avoid:"Acting from it without reflection — hate is not a reliable guide to right action and poisons the person who carries it as much as the target."},
+
+  // CH 3 · WHEN PLANS FAIL
+  {id:"boredom",name:"Boredom",ch:"Ch. 3 · When Plans Fail",tag:"This isn't engaging you at the right level",cat:"unplanned",color:"#8A9A7A",
+   signal:"Boredom signals the current situation isn't engaging you — too easy, too repetitive, or too disconnected from meaning. Brown notes it can be worth listening to rather than immediately suppressing.",
+   strats:["Ask: is this a skill gap, a challenge gap, or a meaning gap?","Introduce novelty, difficulty, or social connection to the task","Use boredom as a cue to explore what you actually want","Resist immediately numbing it — it is information"],
+   avoid:"Chronic distraction as a response — boredom numbed is boredom ignored, and the signal returns louder."},
+
+  {id:"disappointment",name:"Disappointment",ch:"Ch. 3 · When Plans Fail",tag:"Reality fell short of expectation",cat:"unplanned",color:"#7A6B8A",
+   signal:"Disappointment is the gap between expectation and reality. It signals that something mattered enough for you to have hope for it. Brown notes disappointment is the price of having hopes — worth paying.",
+   strats:["Name the specific expectation that wasn't met","Examine whether it was communicated clearly or assumed","Allow yourself to grieve the version of events you'd hoped for","Recalibrate expectations based on what you've learned"],
+   avoid:"Pretending it doesn't hurt — unexpressed disappointment tends to become resentment or cynicism."},
+
+  {id:"expectations",name:"Expectations",ch:"Ch. 3 · When Plans Fail",tag:"Beliefs about how things should go",cat:"unplanned",color:"#6B5A7A",
+   signal:"Expectations are beliefs about how things should unfold. Brown examines how unacknowledged, unexpressed expectations reliably produce disappointment and resentment — they are 'resentments under construction.'",
+   strats:["Make expectations explicit — to yourself and to others","Examine whether an expectation is reasonable and fair","Share expectations before situations unfold, not after","Distinguish expectations from preferences — one is a demand, one is a wish"],
+   avoid:"Holding expectations without expressing them and then being resentful when they aren't met — one of the most common sources of relational pain."},
+
+  {id:"regret",name:"Regret",ch:"Ch. 3 · When Plans Fail",tag:"You wish you had chosen differently",cat:"unplanned",color:"#8A5A9A",
+   signal:"Regret is the painful belief that a different past decision would have produced a better outcome. Brown notes regret often points to our deepest values — we regret most what violated our core commitments.",
+   strats:["Extract the specific lesson — what would you do differently?","Separate what you knew then from what you know now","Make amends if possible and relevant","Use it as information for future decisions, not ongoing self-punishment"],
+   avoid:"Ruminating indefinitely — once the lesson is extracted and any repair is made, continued regret is suffering with no return."},
+
+  {id:"discouragement",name:"Discouragement",ch:"Ch. 3 · When Plans Fail",tag:"Progress feels impossible",cat:"unplanned",color:"#8A7060",
+   signal:"Discouragement arises when effort doesn't seem to produce results. It signals a gap between your investment and visible outcomes, and often appears when the path is longer than expected.",
+   strats:["Zoom out and look at progress over a longer time horizon","Talk to someone who has navigated similar setbacks","Celebrate small process wins, not just outcomes","Reconnect with why the goal matters — not just whether you're succeeding"],
+   avoid:"Quitting in the trough — discouragement often peaks just before a breakthrough. It is a normal phase of meaningful pursuit."},
+
+  {id:"resignation",name:"Resignation",ch:"Ch. 3 · When Plans Fail",tag:"You've stopped believing change is possible",cat:"unplanned",color:"#7A7A7A",
+   signal:"Resignation is deeper than discouragement — a settled belief that nothing will improve and effort is pointless. Brown notes it signals learned helplessness: a loss of the sense of agency.",
+   strats:["Examine whether the hopelessness is situational or has become global","Identify one small thing in your control and act on it","Seek perspective from outside your current frame","Ask whether the situation is genuinely unchangeable or you've simply stopped trying"],
+   avoid:"Accepting it as truth without examination — resignation is a feeling, not a fact. It often masquerades as wisdom when it's actually despair."},
+
+  {id:"frustration",name:"Frustration",ch:"Ch. 3 · When Plans Fail",tag:"A goal is persistently blocked",cat:"unplanned",color:"#B85A30",
+   signal:"Frustration arises when progress toward a goal is blocked and efforts keep failing. It signals a need to either address the obstacle or adapt the approach.",
+   strats:["Identify specifically what is blocking you","Ask: can the obstacle be removed, or must I adapt?","Take a break to restore cognitive flexibility before problem-solving","Distinguish frustration at the situation from frustration at a person"],
+   avoid:"Displacement — taking frustration out on whoever is nearest rather than addressing the actual obstacle."},
+
+  // CH 4 · AWE & WONDER
+  {id:"awe",name:"Awe",ch:"Ch. 4 · Awe & Wonder",tag:"You've encountered something vast",cat:"beyond",color:"#2E6DA4",
+   signal:"Awe arises when we encounter something so vast — in size, complexity, beauty, or meaning — that it challenges our existing frameworks. Brown notes awe involves a 'need to accommodate': our understanding must grow.",
+   strats:["Let yourself be small — awe benefits from surrender, not analysis","Seek it intentionally: nature, music, art, acts of courage","Use it to recalibrate perspective when caught in small worries","Share it — awe is one of the most socially bonding emotions"],
+   avoid:"Rushing back to ordinary consciousness too quickly — awe requires a moment to land before being processed."},
+
+  {id:"wonder",name:"Wonder",ch:"Ch. 4 · Awe & Wonder",tag:"Openness to what's possible",cat:"beyond",color:"#3A7AB5",
+   signal:"Wonder is awe's quieter counterpart — an openness and curiosity about what is possible beyond current knowledge. Brown describes it as an opening rather than an overwhelming. It signals a mind that hasn't closed itself off.",
+   strats:["Ask 'I wonder...' questions regularly — about people, ideas, experiences","Approach familiar things as if encountering them for the first time","Protect time for exploratory thinking without agenda","Model it for others — wonder is contagious"],
+   avoid:"Letting certainty crowd it out — wonder requires tolerance for not-knowing that expertise can sometimes erode."},
+
+  {id:"curiosity",name:"Curiosity",ch:"Ch. 4 · Awe & Wonder",tag:"There's something worth understanding here",cat:"beyond",color:"#2E8A7A",
+   signal:"Curiosity is a pull toward information, experience, or understanding. Brown notes that curiosity and judgment cannot easily coexist — curiosity is a powerful antidote to contempt and prejudice.",
+   strats:["Follow it even when it's not immediately 'useful'","Ask one more question before reaching a conclusion","Let curiosity be your antidote to judgment and contempt","Create conditions for it: unstructured time, novel inputs, diverse people"],
+   avoid:"Treating it as a luxury — curiosity is foundational to creativity, empathy, and learning. Starving it has real costs."},
+
+  {id:"interest",name:"Interest",ch:"Ch. 4 · Awe & Wonder",tag:"Something has caught your attention",cat:"beyond",color:"#2A9A8A",
+   signal:"Interest is a positive emotional state that orients us toward exploring something new. It is the seed from which curiosity grows. Brown notes that sustained interest — not just excitement — makes deep engagement possible.",
+   strats:["Follow the thread — interest is often the leading edge of passion","Notice what reliably captures your attention — it is data about your values","Protect time to explore what interests you without pressure","Share your interests; expressed interest creates connection"],
+   avoid:"Dismissing interest as distraction — it is often the entry point to your most meaningful work and relationships."},
+
+  {id:"surprise",name:"Surprise",ch:"Ch. 4 · Awe & Wonder",tag:"Reality didn't match your prediction",cat:"beyond",color:"#8A5BAA",
+   signal:"Surprise fires briefly when reality differs from prediction — a neural alert that new information is incoming. It can be positive or negative and primes the brain for updating its model of the world.",
+   strats:["Pause before reacting — surprise briefly clouds judgment","Update your mental model with the new information","Notice whether your surprise reveals an unexamined assumption","Allow positive surprises to fully register rather than explaining them away"],
+   avoid:"Anchoring on your original prediction after being surprised — the update is the point."},
+
+  {id:"confusion",name:"Confusion",ch:"Ch. 4 · Awe & Wonder",tag:"You don't have enough information yet",cat:"beyond",color:"#7A6AA0",
+   signal:"Confusion signals a gap between what you understood and what is actually happening. Brown notes confusion can be the doorway to learning — a sign that growth is being demanded of us.",
+   strats:["Stay with confusion a moment before trying to resolve it — something is being integrated","Ask clarifying questions without embarrassment","Seek information from multiple sources before concluding","Distinguish productive confusion (learning) from chronic confusion (avoidance)"],
+   avoid:"Pretending to understand when you don't — false clarity prevents real learning and creates errors downstream."},
+
+  // CH 5 · NOT WHAT THEY SEEM
+  {id:"amusement",name:"Amusement",ch:"Ch. 5 · Not What They Seem",tag:"Pleasurable surprise and lightness",cat:"not-as-they-seem",color:"#8A9A4A",
+   signal:"Amusement is an enjoyable state following something unexpected and pleasant. It signals something caught you off-guard in a good way. Brown notes amusement and laughter are powerful connectors and regulators.",
+   strats:["Let yourself laugh — amusement is physiologically regulating","Cultivate it deliberately; seek lightness alongside seriousness","Use shared amusement to build and repair connection","Notice what delights you — it tells you something about who you are"],
+   avoid:"Using humor as armor — amusement that is always deflection prevents real connection."},
+
+  {id:"bittersweetness",name:"Bittersweetness",ch:"Ch. 5 · Not What They Seem",tag:"Joy and sadness at the same moment",cat:"not-as-they-seem",color:"#7A5A8A",
+   signal:"Bittersweetness is the simultaneous presence of happiness and sadness — a moment so full it contains both. Brown notes it is one of the most distinctly human emotional experiences and often appears at transitions and endings.",
+   strats:["Hold both feelings without forcing resolution — they can coexist","Honor what is ending as you welcome what is beginning","Speak the complexity rather than flattening it to one emotion","Let it deepen your appreciation for impermanence"],
+   avoid:"Choosing only one side — insisting on pure happiness denies the loss; focusing only on sadness misses the gift."},
+
+  {id:"nostalgia",name:"Nostalgia",ch:"Ch. 5 · Not What They Seem",tag:"A bittersweet longing for the past",cat:"not-as-they-seem",color:"#9A7A5A",
+   signal:"Nostalgia is a complex emotional state — part fondness, part loss — for a past that may be idealized. Brown notes it is not simply sadness; it also carries warmth. It signals that a prior chapter held something meaningful.",
+   strats:["Let it point to what you value — nostalgia is a compass toward meaning","Use it to reconnect with people from that chapter","Examine whether you're longing for a time or an experience you could recreate","Distinguish nostalgia from avoidance of the present"],
+   avoid:"Living in it — nostalgia is a useful visitor but a poor permanent resident. The past cannot be re-entered, only learned from."},
+
+  {id:"cognitive-dissonance",name:"Cognitive Dissonance",ch:"Ch. 5 · Not What They Seem",tag:"Holding two conflicting truths at once",cat:"not-as-they-seem",color:"#6A7A5A",
+   signal:"Cognitive dissonance is the discomfort of holding two contradictory beliefs, values, or behaviors simultaneously. It often signals a gap between who we say we are and how we're actually behaving — a call for integrity.",
+   strats:["Name the contradiction explicitly — clarity is the first step","Examine which belief or behavior needs to change to restore alignment","Resist the urge to rationalize away the discomfort — it's useful","Use it as a prompt for values clarification"],
+   avoid:"Resolving it only by dismissing one truth — easy resolution often means important information was suppressed."},
+
+  {id:"paradox",name:"Paradox",ch:"Ch. 5 · Not What They Seem",tag:"Two contradictory things are both true",cat:"not-as-they-seem",color:"#7A6A9A",
+   signal:"Paradox is the experience of holding two seemingly contradictory truths simultaneously. Brown notes the capacity to sit with paradox is a mark of emotional and intellectual maturity.",
+   strats:["Resist the urge to resolve a paradox by eliminating one side","Practice 'both/and' thinking rather than 'either/or'","Use paradox as a doorway to nuance","Recognize that the most important truths are often paradoxical"],
+   avoid:"Demanding simple resolution — some of the most meaningful truths in life are paradoxical, and forcing clarity destroys them."},
+
+  {id:"irony",name:"Irony & Sarcasm",ch:"Ch. 5 · Not What They Seem",tag:"Meaning the opposite of what is said",cat:"not-as-they-seem",color:"#8A7A5A",
+   signal:"Irony and sarcasm express something other than what is literally said. Brown examines how sarcasm can be a form of disguised contempt or a shield against vulnerability — 'just joking' as protective distance.",
+   strats:["Use humor and irony as connection tools, not shields","Notice if sarcasm is being used to avoid saying something real","Be honest about what the joke is covering","Create spaces where directness is safe so irony doesn't do the work of honesty"],
+   avoid:"Relying on sarcasm as a primary mode of relating — over time it erodes trust and creates a culture where nothing is quite meant."},
+
+  // CH 6 · HURTING & GRIEF
+  {id:"anguish",name:"Anguish",ch:"Ch. 6 · Hurting & Grief",tag:"Nearly unbearable emotional pain",cat:"hurting",color:"#1A3A6A",
+   signal:"Anguish is grief and pain at their most acute — an almost unbearable emotional experience that can overwhelm normal coping. Brown notes it is distinct from sadness in its intensity: it can render us incapacitated.",
+   strats:["Do not face it alone — anguish requires human presence","Reach for professional support without shame","Focus only on the next small moment, not the whole future","Trust that this level of intensity will shift — it always does"],
+   avoid:"Isolation — anguish is one of the emotions most dangerous to carry alone. Connection is not a luxury here; it is a lifeline."},
+
+  {id:"hope",name:"Hope",ch:"Ch. 6 · Hurting & Grief",tag:"A better future is possible and reachable",cat:"hurting",color:"#3A7AB0",
+   signal:"Brown's research, drawing on Snyder's Hope Theory, defines hope as a cognitive process — not an emotion: belief the future can be better (goals) + the will to get there (agency) + the way to get there (pathways). All three are required.",
+   strats:["Set clear, achievable goals — hope needs a pathway, not just a wish","Develop waypower: identify specific routes toward your goal","Build willpower: motivation to use those routes","Surround yourself with people who model that change is possible"],
+   avoid:"Passive wishing — hope without agency is a fantasy. Brown's research shows hope is active, goal-directed, and learnable."},
+
+  {id:"hopelessness",name:"Hopelessness",ch:"Ch. 6 · Hurting & Grief",tag:"You can't see a way forward",cat:"hurting",color:"#3A3A6A",
+   signal:"Hopelessness is the belief that nothing will change or improve — a loss of belief in the possibility of better. Brown notes both hopelessness and despair signal a need for compassionate intervention.",
+   strats:["Challenge 'nothing will ever change' — is it absolutely true?","Recall a time things improved when you couldn't see how they would","Talk to someone who can hold hope for you when you can't","Seek one small window of possibility — not the full solution"],
+   avoid:"Treating hopelessness as insight — it feels like clear seeing but is usually a narrowed, pain-filtered view of reality."},
+
+  {id:"despair",name:"Despair",ch:"Ch. 6 · Hurting & Grief",tag:"Hope has completely collapsed",cat:"hurting",color:"#2A2A5A",
+   signal:"Despair is an extreme form of hopelessness — a settled, almost physical experience that nothing will ever be better. Brown notes it is one of the most dangerous emotional states and requires serious, prompt support.",
+   strats:["Seek professional support — despair is not a willpower problem","Look for the smallest possible evidence of possibility","Connect with others who have been in dark places and found their way through","Focus on today only — not the whole future"],
+   avoid:"Making permanent decisions from a temporary state — despair is a feeling, not a forecast. But it must be taken seriously and addressed."},
+
+  {id:"sadness",name:"Sadness",ch:"Ch. 6 · Hurting & Grief",tag:"Something valuable was lost or missing",cat:"hurting",color:"#2A72C3",
+   signal:"Sadness signals a loss — a person, an opportunity, an expectation, a version of yourself. Brown distinguishes sadness from depression: sadness is situational and moves; depression is chronic and pervasive.",
+   strats:["Name what specifically was lost","Allow yourself to cry if the impulse arises — it is physiologically regulating","Seek comfort in safe people","Honor what mattered, then gently re-engage with life"],
+   avoid:"Numbing with distractions or pushing through without processing — unaddressed sadness resurfaces as irritability, numbness, or emptiness."},
+
+  {id:"grief",name:"Grief",ch:"Ch. 6 · Hurting & Grief",tag:"Love with nowhere to go",cat:"hurting",color:"#185FA5",
+   signal:"Brown describes grief as 'love with nowhere to go.' We grieve not only death but any significant loss: a relationship, a dream, a version of ourselves, a chapter of life. Grief is the experience of love meeting absence.",
+   strats:["Allow it — grief not moved through gets stored in the body","Resist the urge to timeline or rush the process","Seek people who can sit with you without trying to fix it","Honor what was lost rather than only focusing on moving on"],
+   avoid:"Grief avoidance — the only way through grief is through it. Detours add distance, not shortcuts."},
+
+  // CH 7 · WITH OTHERS
+  {id:"compassion",name:"Compassion",ch:"Ch. 7 · With Others",tag:"Witnessing pain and wanting to help",cat:"with-others",color:"#4A7A9A",
+   signal:"Brown defines compassion as the daily practice of recognizing our shared humanity and acting to relieve suffering. It includes self-compassion — extending to yourself the same care you'd offer others.",
+   strats:["Witness without immediately fixing — presence is often more valuable than solutions","Ask: 'what do you need?' before assuming","Practice self-compassion as seriously as compassion for others","Set limits within compassion — sustainable care requires self-care"],
+   avoid:"Empathy exhaustion from compassion without limits — compassion fatigue is real and treatable only by restoring the self."},
+
+  {id:"pity",name:"Pity",ch:"Ch. 7 · With Others",tag:"Feeling sorry for someone from a distance",cat:"with-others",color:"#7A6A5A",
+   signal:"Pity involves feeling sorry for someone in a way that creates distance and implies superiority. Brown distinguishes it sharply from compassion (solidarity) and empathy (connection).",
+   strats:["Notice when pity creates distance rather than connection","Ask yourself: am I feeling with this person or above them?","Move from pity toward curiosity about their actual experience","Resist the self-congratulatory quality of pity"],
+   avoid:"Offering pity as a substitute for genuine presence — it communicates 'you are unfortunate' not 'you are not alone.'"},
+
+  {id:"empathy",name:"Empathy",ch:"Ch. 7 · With Others",tag:"Feeling with someone",cat:"with-others",color:"#3A6A8A",
+   signal:"Brown distinguishes empathy (feeling with someone) from sympathy (feeling for someone from a distance). Empathy requires perspective-taking, emotional resonance, and willingness to be present in discomfort without fixing it.",
+   strats:["Listen to understand, not to respond","Resist the urge to silver-line — 'at least...' statements close empathic connection","Say 'I don't know what to say, but I'm glad you told me'","Stay in the difficult feeling with the person rather than rushing to fix it"],
+   avoid:"Sympathy disguised as empathy — genuine empathy requires getting into the experience with someone, not observing it from outside."},
+
+  {id:"sympathy",name:"Sympathy",ch:"Ch. 7 · With Others",tag:"Feeling for someone from a distance",cat:"with-others",color:"#5A7A8A",
+   signal:"Sympathy is acknowledging someone's difficulty from the outside — genuine care that maintains distance. Brown notes it doesn't create the same depth of connection as empathy, though it is genuine.",
+   strats:["Recognize when sympathy is appropriate vs. when empathy is called for","Express it genuinely without performing more than you feel","Use it as a foundation to move toward deeper connection if the relationship calls for it","Be honest about your capacity"],
+   avoid:"Offering sympathy when someone needs empathy — sometimes people need to feel less alone, not just acknowledged."},
+
+  {id:"boundaries",name:"Boundaries",ch:"Ch. 7 · With Others",tag:"What is and isn't okay for you",cat:"with-others",color:"#5A9A7A",
+   signal:"Brown defines boundaries as knowing what is okay and what is not okay — and communicating it. They are not walls; they are the conditions under which connection can happen sustainably. Lack of boundaries generates resentment.",
+   strats:["Know your limits before you're in the situation — preparation helps","Communicate boundaries clearly, kindly, and early","Recognize that 'no' is a complete sentence","Hold your boundaries even when uncomfortable — the discomfort is temporary, resentment is cumulative"],
+   avoid:"Treating limits as unkind — the most generous thing you can do for a relationship is be honest about what you need."},
+
+  {id:"comparative-suffering",name:"Comparative Suffering",ch:"Ch. 7 · With Others",tag:"'Others have it worse, so I shouldn't feel this'",cat:"with-others",color:"#7A8A6A",
+   signal:"Comparative suffering is the habit of dismissing our own pain by comparing it to others' greater suffering. Brown notes that suffering is not a finite resource — someone else's greater pain doesn't make yours less real.",
+   strats:["Reject the 'suffering Olympics' — your pain doesn't have to be the worst to deserve attention","Practice self-compassion alongside empathy for others","Name your experience without needing to rank it","Help others without requiring your own pain to be invisible"],
+   avoid:"Using it as false humility — 'I shouldn't complain' often means 'I am not allowed to need support,' which increases suffering."},
+
+  // CH 8 · FALLING SHORT
+  {id:"shame",name:"Shame",ch:"Ch. 8 · Falling Short",tag:"'I am bad' — a threat to belonging",cat:"falling-short",color:"#993556",
+   signal:"Brown defines shame as the intensely painful feeling of believing we are flawed and therefore unworthy of love and belonging. Unlike guilt (I did something bad), shame says 'I am bad.' It is the most destructive self-conscious emotion.",
+   strats:["Name it — shame cannot survive being spoken","Share it with one empathetic, trusted person — it loses power in connection","Challenge the narrative: is 'I am fundamentally bad' actually true?","Separate what you did from who you are"],
+   avoid:"Silence and secrecy — shame grows exponentially in isolation. Connection is the specific antidote Brown's research identified."},
+
+  {id:"self-compassion",name:"Self-Compassion",ch:"Ch. 8 · Falling Short",tag:"Treating yourself as you would a good friend",cat:"falling-short",color:"#9A5A7A",
+   signal:"Self-compassion is not self-pity — Brown draws on Kristin Neff's research showing it involves self-kindness, common humanity, and mindfulness. It is the direct antidote to shame and perfectionism.",
+   strats:["Ask: what would you say to a good friend in this situation? Say that to yourself","Recognize your suffering as part of shared human experience — you are not uniquely broken","Hold difficult feelings with mindfulness rather than suppression or exaggeration","Practice it daily as a skill, not only in crisis"],
+   avoid:"Confusing it with self-pity — self-compassion acknowledges difficulty without wallowing. It is grounded in the same care you'd extend to anyone you love."},
+
+  {id:"perfectionism",name:"Perfectionism",ch:"Ch. 8 · Falling Short",tag:"Trying to earn love through performance",cat:"falling-short",color:"#AA4A6A",
+   signal:"Brown defines perfectionism as the belief that 'if I look perfect, do it perfectly, I can avoid shame, blame, and judgment.' It is a protection strategy masquerading as a virtue — and it doesn't work.",
+   strats:["Distinguish healthy striving (self-improvement) from perfectionism (self-protection)","Let yourself be seen in the process, not just the finished product","Recognize mistakes as part of growth, not evidence of inadequacy","Practice self-compassion when things go wrong — it is perfectionism's direct antidote"],
+   avoid:"Pursuing perfectionism harder when anxious — it tightens the very trap it claims to solve. The bar keeps moving."},
+
+  {id:"guilt",name:"Guilt",ch:"Ch. 8 · Falling Short",tag:"My behavior didn't match my values",cat:"falling-short",color:"#0F6E56",
+   signal:"Guilt says 'I did something bad' — behavior-focused, not identity-focused. Brown sees guilt as adaptive: it calls us back to our values and toward repair, without threatening our fundamental worth.",
+   strats:["Acknowledge the specific impact of what you did","Apologize sincerely and make amends where possible","Extract the lesson — what would you do differently?","Practice self-forgiveness once accountability is genuinely taken"],
+   avoid:"Letting guilt become shame — 'I did something bad' is very different from 'I am bad.' The moment it becomes identity, the rules change."},
+
+  {id:"humiliation",name:"Humiliation",ch:"Ch. 8 · Falling Short",tag:"You were degraded and it wasn't deserved",cat:"falling-short",color:"#8A2A4A",
+   signal:"Humiliation differs from shame: it includes the belief that the treatment was unjust. It is done to you — usually by an authority or in public — rather than felt as something you caused. It triggers a powerful drive to restore dignity.",
+   strats:["Name the injustice — your anger is legitimate","Resist internalizing it as truth about your worth","Seek a safe space to process before deciding how to respond","Take the time you need — reactions made in the heat of humiliation are often regretted"],
+   avoid:"Turning the anger inward — humiliation's pain is real, but absorbing it as shame compounds the original injury."},
+
+  {id:"embarrassment",name:"Embarrassment",ch:"Ch. 8 · Falling Short",tag:"A temporary, recoverable social stumble",cat:"falling-short",color:"#C05070",
+   signal:"Embarrassment is lighter and more fleeting than shame — the hot flush of a social miscue. Crucially, Brown notes it includes the implicit recognition that others have done similar things. It passes.",
+   strats:["Laugh at yourself when appropriate — self-humor is the fastest path through embarrassment","Normalize it: everyone has embarrassing moments","Repair quickly if someone else was affected","Let it go — embarrassment passes if allowed"],
+   avoid:"Treating it like shame — embarrassment is not evidence of deep unworthiness. Magnifying it turns a small stumble into a consuming story."},
+
+  // CH 9 · SEEKING CONNECTION
+  {id:"belonging",name:"Belonging",ch:"Ch. 9 · Seeking Connection",tag:"You are accepted as you are",cat:"connection",color:"#2E7D5A",
+   signal:"Brown's pivotal finding: true belonging is not fitting in — it is being fully accepted without having to change who you are. It signals psychological safety at its deepest level. Fitting in requires self-erasure; belonging does not.",
+   strats:["Distinguish belonging from fitting in — they feel similar but require opposite things","Cultivate relationships where you don't have to perform","Practice belonging to yourself first — it's harder to find externally what you won't offer yourself","Be the kind of person who makes others feel they belong"],
+   avoid:"Shapeshifting to be accepted — conformity is belonging's counterfeit. You may gain entry but lose yourself in the process."},
+
+  {id:"fitting-in",name:"Fitting In",ch:"Ch. 9 · Seeking Connection",tag:"Changing yourself to be accepted",cat:"connection",color:"#4A8A6A",
+   signal:"Fitting in involves assessing a situation and morphing to match it. Brown notes it is one of belonging's greatest barriers: it buys acceptance at the cost of authenticity — so the acceptance is never quite satisfying.",
+   strats:["Notice when you are adjusting yourself to gain approval","Ask: what am I hiding or emphasizing to fit in?","Assess whether this is a space worth belonging to on your own terms","Build environments where others don't have to fit in either"],
+   avoid:"Confusing fitting in with belonging — you can be in the room and still feel completely alone if you're performing rather than present."},
+
+  {id:"connection",name:"Connection",ch:"Ch. 9 · Seeking Connection",tag:"The felt sense of being truly seen",cat:"connection",color:"#3A9A7A",
+   signal:"Brown defines connection as the energy between people when they feel seen, heard, and valued. Its presence signals safety; its absence signals a fundamental unmet need. It is the core of what makes us human.",
+   strats:["Be present — put down the phone, make eye contact, listen fully","Share something real — connection requires some degree of vulnerability","Invest in depth over breadth — a few meaningful connections outweigh many surface ones","Repair quickly when connection ruptures — repair builds more trust than never rupturing"],
+   avoid:"Substituting digital contact for genuine presence — likes and messages can simulate connection without producing it."},
+
+  {id:"disconnection",name:"Disconnection",ch:"Ch. 9 · Seeking Connection",tag:"The thread between you and others is severed",cat:"connection",color:"#6A7A8A",
+   signal:"Disconnection is the felt sense of being cut off — from others, from yourself, or from meaning. Brown describes it as one of the most dangerous experiences humans can have; we are wired for connection, and its absence causes measurable harm.",
+   strats:["Name it to someone safe — even saying 'I feel disconnected' begins to restore connection","Seek shared experience — doing something alongside others, even silently, helps","Look for small moments of eye contact, warmth, or recognition","Examine whether you have been armoring in ways that keep people out"],
+   avoid:"Accepting disconnection as permanent or as proof of something wrong with you — it is a state, not an identity."},
+
+  {id:"insecurity",name:"Insecurity",ch:"Ch. 9 · Seeking Connection",tag:"Uncertainty about your worth or place",cat:"connection",color:"#7A6A9A",
+   signal:"Insecurity is uncertainty about oneself — doubting whether we are enough. Brown notes it often arises in contexts of evaluation or comparison and is fueled by the 'not enough' story.",
+   strats:["Name the specific fear underneath the insecurity","Resist the comparison spiral — it has no floor","Cultivate self-compassion as the antidote, not achievement","Take one small competent action to rebuild confidence in context"],
+   avoid:"Seeking constant external reassurance — it soothes insecurity briefly but doesn't address its root."},
+
+  {id:"invisibility",name:"Invisibility",ch:"Ch. 9 · Seeking Connection",tag:"You feel unseen and uncounted",cat:"connection",color:"#8A8A9A",
+   signal:"Invisibility is the experience of not being seen, heard, or valued — of being overlooked or dismissed. Brown notes it strikes at the core of belonging and is one of the most painful human experiences.",
+   strats:["Name the experience clearly — 'I feel invisible here'","Seek out spaces and people where you are genuinely seen","Advocate for your own visibility when it is safe to do so","See and name others — it is the direct antidote to invisibility as a social experience"],
+   avoid:"Internalizing invisibility as evidence of unworthiness — being unseen by the wrong people says nothing about your actual value."},
+
+  {id:"loneliness",name:"Loneliness",ch:"Ch. 9 · Seeking Connection",tag:"The need for connection is deeply unmet",cat:"connection",color:"#888780",
+   signal:"Brown describes loneliness as the absence of meaningful connection — not necessarily of people. You can feel lonely in a crowd. It signals a biological need as urgent as hunger, and produces measurable physiological stress.",
+   strats:["Reach out to one person — lower the bar for contact","Be willing to go first with vulnerability; surface-level interaction rarely satisfies","Invest in existing relationships rather than always seeking new ones","Distinguish loneliness (lack of depth) from aloneness (lack of people) — they need different remedies"],
+   avoid:"Isolating further or numbing with screens — both delay the only actual solution: genuine human connection."},
+
+  // CH 10 · HEART OPEN
+  {id:"love",name:"Love",ch:"Ch. 10 · Heart Open",tag:"We cultivate it when we allow ourselves to be fully seen",cat:"heart-open",color:"#C0406A",
+   signal:"Brown defines love not merely as a feeling but as a practice: 'We cultivate love when we allow our most vulnerable and powerful selves to be deeply seen and known.' It signals a safe, cherished connection.",
+   strats:["Practice love as a verb — it is built in daily acts, not grand declarations","Create conditions for mutual vulnerability","Learn the other person's love language and speak it","Protect the relationship from contempt — Gottman identifies it as love's primary destroyer"],
+   avoid:"Treating love as unconditional tolerance of harm — love can coexist with limits and should. Love without limits is not actually love."},
+
+  {id:"lovelessness",name:"Lovelessness",ch:"Ch. 10 · Heart Open",tag:"The felt absence of love",cat:"heart-open",color:"#7A3A5A",
+   signal:"Lovelessness is the painful absence of the feeling of being loved or of having love to give. Brown notes it can arise from loss, isolation, or repeated experiences of rejection, and signals a deep unmet need.",
+   strats:["Seek connection rather than waiting for love to find you","Practice self-love as a genuine starting point","Be willing to be vulnerable enough to let love in","Name what blocks you from feeling loved even when it may be present"],
+   avoid:"Concluding that love is not possible for you — lovelessness is a state, not a destiny."},
+
+  {id:"heartbreak",name:"Heartbreak",ch:"Ch. 10 · Heart Open",tag:"Love was lost or violated",cat:"heart-open",color:"#A03050",
+   signal:"Heartbreak is grief in the context of love. Brown notes it often involves not just loss but the shattering of a story we told about the relationship and about ourselves within it.",
+   strats:["Allow yourself to grieve fully — heartbreak cannot be thought away","Resist the urge to immediately make meaning or 'get over it'","Stay connected to people who hold you without requiring you to be okay","Be gentle with yourself — heartbreak reshapes something real and takes real time"],
+   avoid:"Sealing your heart as protection — the armor keeps out future pain but also future love. The cost of permanent self-protection is too high."},
+
+  {id:"trust",name:"Trust",ch:"Ch. 10 · Heart Open",tag:"I can rely on you with what matters",cat:"heart-open",color:"#2A7A6A",
+   signal:"Brown's BRAVING inventory defines trust through seven elements: Boundaries, Reliability, Accountability, Vault, Integrity, Non-judgment, and Generosity. Trust is built in small moments, not grand gestures.",
+   strats:["Build it slowly — trust is a marble jar, filled one small action at a time","Be the person you need others to be","Name when trust is broken and address it — silence lets it decay further","Distinguish trust in a person from trust in a specific context — both can vary independently"],
+   avoid:"Extending trust indiscriminately or withholding it completely — both extremes damage relationships."},
+
+  {id:"self-trust",name:"Self-Trust",ch:"Ch. 10 · Heart Open",tag:"I can rely on myself",cat:"heart-open",color:"#3A8A7A",
+   signal:"Brown notes self-trust is built through the same BRAVING elements applied to yourself: keeping promises to yourself, holding your own values, and treating yourself with the integrity you'd extend to others.",
+   strats:["Keep promises you make to yourself — even small ones build the account","Act in alignment with your values even when difficult","Forgive yourself for past violations of your own trust, then rebuild","Notice the difference between self-doubt and useful self-reflection"],
+   avoid:"Over-relying on external validation to make decisions — when self-trust is absent, others' opinions fill the vacuum."},
+
+  {id:"betrayal",name:"Betrayal",ch:"Ch. 10 · Heart Open",tag:"Someone violated your trust",cat:"heart-open",color:"#7A2A2A",
+   signal:"Betrayal signals that someone you trusted — with your heart, your secrets, your vulnerability — violated that trust. Brown identifies it as one of the most common sources of grief and anger in relationships.",
+   strats:["Name the specific action that violated trust — vague betrayal is harder to address","Allow yourself to feel both the anger and grief — both are legitimate","Decide consciously whether and how to repair — repair requires genuine accountability from the other person","Set clear conditions for any reconciliation"],
+   avoid:"Both extremes: cutting off all trust in all relationships, or minimizing the betrayal to preserve the relationship. Both bypass the actual work of repair."},
+
+  {id:"defensiveness",name:"Defensiveness",ch:"Ch. 10 · Heart Open",tag:"Protecting yourself from perceived attack",cat:"heart-open",color:"#8A5A3A",
+   signal:"Defensiveness is a protective response to perceived threat or criticism. Brown notes that defensiveness almost always signals that something landed close to a fear or wound. It closes connection and prevents feedback from reaching us.",
+   strats:["Notice when you're defending and pause before responding","Ask: what specifically triggered the defensiveness?","Try to hear the feedback under the delivery — separate message from tone","Acknowledge the other person's experience before defending your own"],
+   avoid:"Using defensiveness to avoid accountability — it protects the ego at the cost of growth and connection."},
+
+  {id:"flooding",name:"Flooding",ch:"Ch. 10 · Heart Open",tag:"Your nervous system is overwhelmed",cat:"heart-open",color:"#9A4A3A",
+   signal:"Flooding (Gottman's term) is physiological overwhelm during conflict — heart rate spikes, the nervous system goes into fight-or-flight, and productive conversation becomes impossible. Brown addresses it as a key obstacle to repair in relationships.",
+   strats:["Recognize the physical signs: racing heart, flushed face, inability to think clearly","Call for a time-out — not avoidance, but genuine physiological regulation","Wait 20-30 minutes minimum before returning to conversation — the body needs time","Agree on a signal with your partner for flooding before conflict escalates"],
+   avoid:"Continuing the conversation while flooded — nothing useful comes from it and harm is likely."},
+
+  {id:"hurt",name:"Hurt",ch:"Ch. 10 · Heart Open",tag:"Someone who matters caused you pain",cat:"heart-open",color:"#B04060",
+   signal:"Hurt combines sadness (something bad happened) with fear (the relationship may not be safe). It signals a wound within a relationship that matters — you can only be hurt by those whose actions carry weight for you.",
+   strats:["Name the hurt directly rather than showing only anger","Share it with the person when possible — staying silent breeds distance and resentment","Distinguish hurt from harm — both deserve attention but may need different responses","Give the other person an opportunity to understand and repair"],
+   avoid:"Weaponizing hurt — using it to punish or control rather than to communicate and seek repair closes the very connection you're trying to protect."},
+
+  // CH 11 · LIFE IS GOOD
+  {id:"joy",name:"Joy",ch:"Ch. 11 · Life is Good",tag:"A sudden sense of deep wellbeing",cat:"life-good",color:"#3B8A22",
+   signal:"Brown distinguishes joy from happiness: joy is more visceral, sudden, and connected to present-moment grace — often felt in ordinary moments of connection, play, or beauty. It is not dependent on circumstances.",
+   strats:["Savor it — slow down and let it register fully in your body","Share it; shared joy deepens and amplifies","Practice gratitude to build conditions in which joy can arise","Let yourself have it without waiting for the other shoe to drop"],
+   avoid:"Foreboding joy — the habit of catastrophizing during happy moments. It sacrifices present joy for imagined future protection that doesn't actually work."},
+
+  {id:"happiness",name:"Happiness",ch:"Ch. 11 · Life is Good",tag:"Life is going well in this moment",cat:"life-good",color:"#5A9A2A",
+   signal:"Brown distinguishes happiness from joy: happiness is more circumstantial, tied to outcomes and experiences aligning with what we want. It fluctuates with circumstances and is dependent on the external world.",
+   strats:["Notice and name what created it — you can intentionally seek more","Cultivate the conditions: connection, meaning, positive experiences","Express it — shared happiness strengthens relationships","Allow it fully without guilt or minimizing"],
+   avoid:"Chasing it as a permanent state — happiness is situational and episodic. Making it a constant goal creates chronic disappointment."},
+
+  {id:"calm",name:"Calm",ch:"Ch. 11 · Life is Good",tag:"Perspective and regulation amid difficulty",cat:"life-good",color:"#2A8A8A",
+   signal:"Brown defines calm as having perspective and being able to manage emotions even in difficult situations — not being swept away. It is regulated presence, not indifference. Calm is both a trait and a learnable skill.",
+   strats:["Cultivate it proactively — it becomes available in crisis only when trained beforehand","Use it as a resource to offer to others in distress — calm is contagious","Identify your own path back to calm: breath, movement, specific practices","Protect it fiercely from chronic inputs that erode it"],
+   avoid:"Mistaking numbness or emotional suppression for calm — genuine calm is regulated but fully present."},
+
+  {id:"contentment",name:"Contentment",ch:"Ch. 11 · Life is Good",tag:"Enough, right now",cat:"life-good",color:"#4A8A6A",
+   signal:"Contentment is a quiet sense that the present moment is sufficient — a low-intensity satisfaction with life as it is. Brown notes it signals freedom from the 'not enough' narrative. It doesn't require anything to be different.",
+   strats:["Practice noticing it — contentment is easily overlooked because it lacks drama","Resist the pull to immediately want more when you feel it","Distinguish contentment from complacency — one is peace, the other is avoidance","Cultivate it through simplicity, presence, and gratitude"],
+   avoid:"Confusing contentment with settling — genuine contentment is a felt sense of sufficiency, not resignation."},
+
+  {id:"gratitude",name:"Gratitude",ch:"Ch. 11 · Life is Good",tag:"Deep appreciation for what is present",cat:"life-good",color:"#2A7A4A",
+   signal:"Brown's research found that people who experience the most joy practice gratitude actively and specifically. It is both an antidote to foreboding joy and a generator of connection — and it can coexist with difficulty.",
+   strats:["Practice concretely: name three specific things rather than generic ones","Express it directly to the people it involves","Use it as an antidote to foreboding joy in happy moments","Make it a deliberate practice rather than waiting to feel it spontaneously"],
+   avoid:"Toxic positivity disguised as gratitude — 'at least' statements that minimize real pain are not gratitude. Gratitude does not require erasing difficulty."},
+
+  {id:"foreboding-joy",name:"Foreboding Joy",ch:"Ch. 11 · Life is Good",tag:"Waiting for something to go wrong",cat:"life-good",color:"#7A8A3A",
+   signal:"Brown identifies foreboding joy as one of the most common joy-killers: feeling happiness and immediately imagining what could go wrong. It is 'dress-rehearsing tragedy' as a way of managing vulnerability. It never actually protects against loss.",
+   strats:["Name it when you notice it: 'I'm foreboding joy right now'","Practice gratitude in the happy moment — the specific antidote Brown identified","Recognize that catastrophizing does not protect you from future loss","Lean into the vulnerability of fully feeling joy — it is the only way to have it"],
+   avoid:"Letting it become habitual — foreboding joy is joy rationing, and it means living at diminished capacity even during the best times."},
+
+  {id:"relief",name:"Relief",ch:"Ch. 11 · Life is Good",tag:"The threat or difficulty has passed",cat:"life-good",color:"#3A9A7A",
+   signal:"Relief is the emotional and physical release of tension after a period of stress, threat, or uncertainty has passed. It signals the nervous system exhaling — a return to safety.",
+   strats:["Let yourself fully exhale — physically and emotionally","Acknowledge what you went through before rushing forward","Use the clarity that follows relief to reflect on what mattered","Restore and replenish before taking on the next challenge"],
+   avoid:"Rushing past relief directly into the next worry — it is a gift of recalibration worth receiving."},
+
+  {id:"tranquility",name:"Tranquility",ch:"Ch. 11 · Life is Good",tag:"Deep, sustained peace",cat:"life-good",color:"#2A7A9A",
+   signal:"Tranquility is deeper and more sustained than calm — it is associated with environments and practices that allow the nervous system to fully restore and the mind to settle without vigilance.",
+   strats:["Identify what environments create it for you and seek them deliberately","Protect it — tranquility requires conditions that are easily disrupted","Let it be restorative without agenda","Share tranquil experiences with people you care about"],
+   avoid:"Treating it as indulgent — tranquility is not laziness. It is a genuine physiological and psychological need."},
+
+  // CH 12 · WRONGED & ANGER
+  {id:"anger",name:"Anger",ch:"Ch. 12 · Wronged & Anger",tag:"A value, boundary, or injustice demands a response",cat:"wronged",color:"#D85A30",
+   signal:"Brown sees anger as a catalyst — not a sustainable position but a critical signal. It tells you that something you care about has been violated. The goal is to use anger as information and motivation, not as a weapon or a wall.",
+   strats:["Pause before acting — let the acute heat pass before responding","Identify the specific value, boundary, or injustice that was violated","Use it as information, then decide consciously how to respond","Channel the energy into constructive change or advocacy"],
+   avoid:"Suppressing it (it resurfaces as resentment) or expressing it reactively — both waste the important information it carries."},
+
+  {id:"self-righteousness",name:"Self-Righteousness",ch:"Ch. 12 · Wronged & Anger",tag:"Anger armored in moral certainty",cat:"wronged",color:"#9A5A20",
+   signal:"Self-righteousness is what happens when anger puts on armor — when we stop being curious and start being certain, using moral superiority to avoid vulnerability. Brown notes it closes down conversation and prevents genuine understanding.",
+   strats:["Ask: am I more interested in being right than in understanding?","Look for the complexity you might be ignoring","Check whether certainty is about values or about ego","Stay in the conversation rather than retreating into judgment"],
+   avoid:"Using moral certainty as permission to stop listening — the capacity for harm increases in direct proportion to certainty of righteousness."},
+
+  // CH 13 · SELF-ASSESSMENT
+  {id:"pride",name:"Pride",ch:"Ch. 13 · Self-Assessment",tag:"I did something worth honoring",cat:"self-assess",color:"#7A6ABB",
+   signal:"Authentic pride signals competence and accomplishment earned through effort. Brown distinguishes it from hubris: authentic pride says 'I did something well,' while hubris says 'I am better than others.'",
+   strats:["Let yourself feel it — authentic pride is earned and healthy","Share it without requiring others to validate it","Connect it to effort and process, not just outcomes","Use it to calibrate what you're capable of pursuing next"],
+   avoid:"Suppressing it out of false modesty — there is nothing virtuous about refusing to acknowledge genuine accomplishment."},
+
+  {id:"hubris",name:"Hubris",ch:"Ch. 13 · Self-Assessment",tag:"An inflated sense of superiority",cat:"self-assess",color:"#8A4A2A",
+   signal:"Hubris is pride's shadow — an inflated sense of one's own importance detached from reality. Brown notes it typically arises from shame and is a compensation strategy. The more hubristic the performance, the more shame often underneath.",
+   strats:["Actively seek honest feedback from people who will give it","Look for what you don't know — hubris hates uncertainty","Cultivate relationships with people who aren't impressed by status or performance","Stay connected to your own failures and limitations"],
+   avoid:"Surrounding yourself only with people who agree with you — hubris feeds on echo chambers and starves in the presence of honest challenge."},
+
+  {id:"humility",name:"Humility",ch:"Ch. 13 · Self-Assessment",tag:"Accurate self-awareness without distortion",cat:"self-assess",color:"#5A8A7A",
+   signal:"True humility per Brown is not thinking less of yourself — it is thinking of yourself less. It is accurate self-assessment: holding both strengths and limitations without inflation or self-diminishment. It is the prerequisite for learning.",
+   strats:["Distinguish humility from self-deprecation — they are opposites","Stay genuinely curious and open to being wrong","Give others credit genuinely, not performatively","Lead with questions more than answers — especially in areas of expertise"],
+   avoid:"Performing humility while privately believing you are superior — false humility is hubris with better optics and is more corrosive because it is dishonest."}
+];
+
+// ── RENDER ──
+let activeId = null;
+
+function renderCards(filter) {
+  const grid = document.getElementById("grid");
+  const detail = document.getElementById("detail");
+  activeId = null;
+  detail.classList.remove("visible");
+  detail.innerHTML = "";
+  const list = filter === "all" ? E : E.filter(e => e.cat === filter);
+  grid.innerHTML = list.map(e => `
+    <button class="emo-card" data-id="${e.id}" style="border-color:${e.color}25;">
+      <div class="emo-accent" style="background:${e.color};"></div>
+      <div class="emo-body">
+        <p class="emo-name">${e.name}</p>
+        <p class="emo-tagline">${e.tag}</p>
+      </div>
+    </button>`).join("");
+  grid.querySelectorAll(".emo-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.dataset.id;
+      const found = E.find(e => e.id === id);
+      if (activeId === id) {
+        activeId = null;
+        detail.classList.remove("visible");
+        grid.querySelectorAll(".emo-card").forEach(c => { c.classList.remove("active"); c.style.borderColor = found.color+"25"; });
+        return;
+      }
+      activeId = id;
+      grid.querySelectorAll(".emo-card").forEach(c => { c.classList.remove("active"); c.style.borderColor = E.find(e=>e.id===c.dataset.id).color+"25"; });
+      card.classList.add("active");
+      card.style.borderColor = found.color+"80";
+      showDetail(found);
+    });
+  });
+}
+
+function showDetail(e) {
+  const panel = document.getElementById("detail");
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-dot" style="background:${e.color};"></div>
+      <div>
+        <p class="detail-chapter">${e.ch}</p>
+        <p class="detail-title">${e.name}</p>
+        <p class="detail-subtitle">${e.tag}</p>
+      </div>
+    </div>
+    <div class="detail-cols">
+      <div class="detail-block">
+        <p class="block-label">What it&rsquo;s signaling</p>
+        <p class="block-text">${e.signal}</p>
+      </div>
+      <div class="detail-block">
+        <p class="block-label">Effective strategies</p>
+        <ul class="block-text">${e.strats.map(s=>`<li>${s}</li>`).join("")}</ul>
+      </div>
+      <div class="detail-block avoid-block">
+        <p class="block-label avoid-label">Common pitfall to avoid</p>
+        <p class="block-text">${e.avoid}</p>
+      </div>
+    </div>`;
+  panel.classList.add("visible");
+  panel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+document.getElementById("filters").addEventListener("click", ev => {
+  const btn = ev.target.closest(".filter-btn");
+  if (!btn) return;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderCards(btn.dataset.filter);
+});
+
+renderCards("all");
+</script>
+</body>
+</html>
