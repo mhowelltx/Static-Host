@@ -70,15 +70,25 @@
   .detail-subtitle{font-size:13px;color:var(--text-secondary);}
   .detail-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
   .detail-block{background:var(--bg-base);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:13px;}
-  .block-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+  .block-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;font-weight:500;}
+  .signal-label{color:rgba(120,160,220,.9)!important;}
+  .strats-label{color:rgba(160,130,210,.9)!important;}
+  .avoid-label{color:rgba(220,100,100,.8)!important;}
+  .support-label{color:rgba(80,180,150,.9)!important;}
+  body.light-mode .signal-label{color:rgba(40,90,170,.75)!important;}
+  body.light-mode .strats-label{color:rgba(100,70,160,.75)!important;}
+  body.light-mode .avoid-label{color:rgba(175,35,35,.65)!important;}
+  body.light-mode .support-label{color:rgba(30,100,80,.75)!important;}
   .block-text{font-size:13px;color:var(--text-secondary);line-height:1.65;}
   .block-text ul{list-style:none;padding:0;margin:0;}
   .block-text li{list-style:none;margin-bottom:6px;padding-left:16px;position:relative;}
   .block-text li::before{content:"•";position:absolute;left:4px;top:0;color:var(--text-muted);}
+  .signal-block{border-left:2px solid rgba(120,160,220,.4);border-radius:0 var(--radius-md) var(--radius-md) 0;}
+  .strats-block{border-left:2px solid rgba(160,130,210,.4);border-radius:0 var(--radius-md) var(--radius-md) 0;}
   .avoid-block{border-left:2px solid rgba(220,80,80,.5);border-radius:0 var(--radius-md) var(--radius-md) 0;}
-  .avoid-label{color:rgba(220,100,100,.8)!important;}
   .support-block{border-left:2px solid rgba(60,160,130,.5);border-radius:0 var(--radius-md) var(--radius-md) 0;}
-  .support-label{color:rgba(80,180,150,.9)!important;}
+  body.light-mode .signal-block{border-left-color:rgba(40,90,170,.35);}
+  body.light-mode .strats-block{border-left-color:rgba(100,70,160,.35);}
 
   /* FOOTER */
   .footer{margin-top:3rem;padding-top:1.25rem;border-top:0.5px solid var(--border);font-size:12px;color:var(--text-muted);line-height:1.6;}
@@ -712,12 +722,12 @@ function showDetail(e) {
       </div>
     </div>
     <div class="detail-cols">
-      <div class="detail-block">
-        <p class="block-label">What it&rsquo;s signaling</p>
+      <div class="detail-block signal-block">
+        <p class="block-label signal-label">What it&rsquo;s signaling</p>
         <p class="block-text">${e.signal}</p>
       </div>
-      <div class="detail-block">
-        <p class="block-label">Effective strategies</p>
+      <div class="detail-block strats-block">
+        <p class="block-label strats-label">Effective strategies</p>
         <ul class="block-text">${e.strats.map(s=>`<li>${s}</li>`).join("")}</ul>
       </div>
       <div class="detail-block avoid-block">
