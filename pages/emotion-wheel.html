@@ -42,6 +42,15 @@
   .wheel-segment{cursor:pointer;transition:filter .15s,opacity .2s;}
   .wheel-segment:hover{filter:brightness(1.2);}
   .emotion-seg.active-segment{filter:brightness(1.35) drop-shadow(0 0 6px currentColor);}
+  #chapter-ring,#emotion-ring,#labels,#hub-text{transition:opacity 0.18s ease;}
+  .chapter-seg.ch-active{filter:brightness(1.12);}
+  .chapter-seg.ch-dimmed{opacity:0.22;}
+  .hub-hint{font-family:var(--font-mono);font-size:8px;fill:rgba(240,237,232,0.30);letter-spacing:0.06em;pointer-events:none;}
+  .hub-chnum{font-family:var(--font-mono);font-size:9px;fill:rgba(240,237,232,0.55);letter-spacing:0.10em;pointer-events:none;}
+  .hub-chname{font-family:var(--font-sans);font-size:10px;fill:rgba(240,237,232,0.80);font-weight:500;pointer-events:none;}
+  body.light-mode .hub-hint{fill:rgba(0,0,0,0.30);}
+  body.light-mode .hub-chnum{fill:rgba(0,0,0,0.50);}
+  body.light-mode .hub-chname{fill:rgba(0,0,0,0.80);}
 
   #tooltip{
     position:fixed;pointer-events:none;z-index:200;
@@ -105,7 +114,7 @@
     <header>
       <p class="page-eyebrow">Psychology &mdash; Bren&eacute; Brown (2021)</p>
       <h1 class="page-title"><strong>Atlas of the Heart</strong> &mdash; Emotion Wheel</h1>
-      <p class="page-desc">85 emotions mapped across 13 chapters. The inner ring shows each chapter; the outer ring shows individual emotions. Click any segment to explore its signal, strategies, and how to support someone experiencing it.</p>
+      <p class="page-desc">85 emotions across 13 chapters. Click a chapter to explore its emotions, then click any emotion segment for detailed guidance on signals, strategies, and support.</p>
     </header>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
       <span id="themeLabel">Light</span>
@@ -119,9 +128,8 @@
       <g id="emotion-ring"></g>
       <g id="labels"></g>
       <!-- Hub -->
-      <circle cx="350" cy="350" r="60" fill="#0d0d0d" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
-      <text x="350" y="345" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="rgba(240,237,232,0.45)" letter-spacing="0.09em">ATLAS OF</text>
-      <text x="350" y="359" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="rgba(240,237,232,0.45)" letter-spacing="0.09em">THE HEART</text>
+      <circle id="hub-bg" cx="350" cy="350" r="60" fill="#0d0d0d" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+      <g id="hub-text"></g>
     </svg>
   </div>
 
@@ -669,25 +677,31 @@ const E = [
 ];
 
 const CHAPTERS = [
-  {cat:"uncertainty",    num:1,  short:"Uncertainty & Fear",       color:"#C05040"},
-  {cat:"comparison",     num:2,  short:"Comparison",               color:"#4A72B0"},
-  {cat:"unplanned",      num:3,  short:"When Plans Fail",          color:"#7A5A9A"},
-  {cat:"beyond",         num:4,  short:"Awe & Wonder",             color:"#D4871A"},
-  {cat:"not-as-they-seem",num:5, short:"Not What They Seem",       color:"#4A8A7A"},
-  {cat:"hurting",        num:6,  short:"Hurting & Grief",          color:"#5060AA"},
-  {cat:"with-others",    num:7,  short:"With Others",              color:"#3A8A5A"},
-  {cat:"falling-short",  num:8,  short:"Falling Short",            color:"#9A4A70"},
-  {cat:"connection",     num:9,  short:"Seeking Connection",       color:"#2A8A9A"},
-  {cat:"heart-open",     num:10, short:"Heart Open",               color:"#C04A7A"},
-  {cat:"life-good",      num:11, short:"Life Is Good",             color:"#6A9A40"},
-  {cat:"wronged",        num:12, short:"Wronged & Anger",          color:"#9A3020"},
-  {cat:"self-assess",    num:13, short:"Self-Assessment",          color:"#9A8030"},
+  {cat:"uncertainty",     num:1,  short:"Uncertainty & Fear",  abbr:"Uncertainty",   hubLine:"& Fear",    color:"#C05040"},
+  {cat:"comparison",      num:2,  short:"Comparison",          abbr:"Comparison",    hubLine:"",          color:"#4A72B0"},
+  {cat:"unplanned",       num:3,  short:"When Plans Fail",     abbr:"Plans Fail",    hubLine:"",          color:"#7A5A9A"},
+  {cat:"beyond",          num:4,  short:"Awe & Wonder",        abbr:"Awe & Wonder",  hubLine:"",          color:"#D4871A"},
+  {cat:"not-as-they-seem",num:5,  short:"Not What They Seem",  abbr:"Not What",      hubLine:"They Seem", color:"#4A8A7A"},
+  {cat:"hurting",         num:6,  short:"Hurting & Grief",     abbr:"Hurting",       hubLine:"& Grief",   color:"#5060AA"},
+  {cat:"with-others",     num:7,  short:"With Others",         abbr:"With Others",   hubLine:"",          color:"#3A8A5A"},
+  {cat:"falling-short",   num:8,  short:"Falling Short",       abbr:"Falling Short", hubLine:"",          color:"#9A4A70"},
+  {cat:"connection",      num:9,  short:"Seeking Connection",  abbr:"Connection",    hubLine:"",          color:"#2A8A9A"},
+  {cat:"heart-open",      num:10, short:"Heart Open",          abbr:"Heart Open",    hubLine:"",          color:"#C04A7A"},
+  {cat:"life-good",       num:11, short:"Life Is Good",        abbr:"Life Is Good",  hubLine:"",          color:"#6A9A40"},
+  {cat:"wronged",         num:12, short:"Wronged & Anger",     abbr:"Wronged",       hubLine:"& Anger",   color:"#9A3020"},
+  {cat:"self-assess",     num:13, short:"Self-Assessment",     abbr:"Self-Assess",   hubLine:"",          color:"#9A8030"},
 ];
 
 const CX = 350, CY = 350;
-const R_CH_IN = 68, R_CH_OUT = 158;
-const R_EM_IN = 163, R_EM_OUT = 300;
-const GAP = 1.0;
+const R_CH_IN       = 65;
+const R_CH_OUT_IDLE = 250;
+const R_CH_MID_IDLE = 157;
+const R_CH_OUT_EXP  = 155;
+const R_CH_MID_EXP  = 110;
+const R_EM_IN       = 160;
+const R_EM_OUT      = 310;
+const R_EM_MID      = 235;
+const GAP           = 1.0;
 
 function p2c(r, deg) {
   const rad = (deg - 90) * Math.PI / 180;
@@ -726,90 +740,181 @@ const layout = CHAPTERS.map(ch => {
   return entry;
 });
 
-let activeId = null;
+let activeCat   = null;
+let activeEmoId = null;
 
-function renderWheel() {
+// ── STATE MACHINE ──
+function transitionTo(newCat) {
+  if (document.getElementById("chapter-ring").style.opacity === "0") return;
+  if (newCat !== null && newCat !== activeCat) hideDetail();
+  const groups = ["chapter-ring","emotion-ring","labels","hub-text"];
+  groups.forEach(id => { document.getElementById(id).style.opacity = "0"; });
+  setTimeout(() => {
+    activeCat = newCat;
+    buildWheel(activeCat);
+    updateHub(activeCat);
+    renderLegend(activeCat);
+    groups.forEach(id => { document.getElementById(id).style.opacity = "1"; });
+  }, 185);
+}
+
+function buildWheel(cat) {
   const chRing = document.getElementById("chapter-ring");
   const emRing = document.getElementById("emotion-ring");
   const labs   = document.getElementById("labels");
   chRing.innerHTML = emRing.innerHTML = labs.innerHTML = "";
+  if (cat === null) {
+    buildIdleState(chRing, labs);
+  } else {
+    buildExpandedState(cat, chRing, emRing, labs);
+  }
+}
 
+function buildIdleState(chRing, labs) {
   layout.forEach(({ch, emotions, sa, ea}) => {
-    // Chapter segment
     const cp = svgEl("path", {
-      d: arc(R_CH_IN, R_CH_OUT, sa, ea),
+      d: arc(R_CH_IN, R_CH_OUT_IDLE, sa, ea),
       fill: ch.color,
       "data-cat": ch.cat,
       class: "wheel-segment chapter-seg",
+      tabindex: "0",
+      role: "button",
+      "aria-label": `Chapter ${ch.num}: ${ch.short} — ${emotions.length} emotions`,
     });
     chRing.appendChild(cp);
 
-    // Chapter label
-    const mid = (sa + ea) / 2;
-    const span = ea - sa;
-    const lp = p2c((R_CH_IN + R_CH_OUT) / 2, mid);
+    const mid     = (sa + ea) / 2;
+    const span    = ea - sa;
+    const arcLen  = R_CH_MID_IDLE * span * Math.PI / 180;
+    if (arcLen < 18) return;
+
+    const lp   = p2c(R_CH_MID_IDLE, mid);
     const flip = mid > 180 && mid < 360;
-    const rot = (mid - 90) + (flip ? 180 : 0);
+    const rot  = (mid - 90) + (flip ? 180 : 0);
+    const tr   = `rotate(${rot.toFixed(1)},${lp.x.toFixed(2)},${lp.y.toFixed(2)})`;
 
-    if (span >= 8) {
-      const t = svgEl("text", {
-        x: lp.x.toFixed(2), y: lp.y.toFixed(2),
-        "text-anchor": "middle", "dominant-baseline": "middle",
-        fill: "rgba(255,255,255,0.92)",
-        "font-family": "DM Mono,monospace",
-        "font-size": span < 15 ? "9" : "10",
-        "font-weight": "500",
-        transform: `rotate(${rot.toFixed(1)},${lp.x.toFixed(2)},${lp.y.toFixed(2)})`,
-        style: "pointer-events:none;",
-      });
-      t.textContent = ch.num;
-      labs.appendChild(t);
-    }
-
-    // Emotion segments
-    emotions.forEach((emo, i) => {
-      const esa = sa + i * degPerEmo;
-      const eea = esa + degPerEmo;
-      const ep = svgEl("path", {
-        d: arc(R_EM_IN, R_EM_OUT, esa, eea),
-        fill: emo.color,
-        "data-id": emo.id,
-        "data-cat": emo.cat,
-        class: "wheel-segment emotion-seg",
-        tabindex: "0",
-        role: "button",
-        "aria-label": emo.name,
-      });
-      emRing.appendChild(ep);
-
-      // Emotion text label (radial, only if wide enough)
-      const emid = (esa + eea) / 2;
-      const espan = eea - esa;
-      const emr = (R_EM_IN + R_EM_OUT) / 2;
-      const elp = p2c(emr, emid);
-      const eflip = emid > 180 && emid < 360;
-      const erot = (emid - 90) + (eflip ? 180 : 0);
-      const arcLen = emr * espan * Math.PI / 180;
-
-      if (arcLen > 22) {
-        const maxChars = Math.floor(arcLen / 6);
-        const label = emo.name.length <= maxChars ? emo.name : emo.name.slice(0, maxChars - 1) + "…";
-        const et = svgEl("text", {
-          x: elp.x.toFixed(2), y: elp.y.toFixed(2),
-          "text-anchor": "middle", "dominant-baseline": "middle",
-          fill: "rgba(255,255,255,0.85)",
-          "font-family": "DM Sans,sans-serif",
-          "font-size": "7.5",
-          transform: `rotate(${erot.toFixed(1)},${elp.x.toFixed(2)},${elp.y.toFixed(2)})`,
-          style: "pointer-events:none;",
-        });
-        et.textContent = label;
-        labs.appendChild(et);
-      }
+    const t = svgEl("text", {
+      x: lp.x.toFixed(2), y: lp.y.toFixed(2),
+      "text-anchor": "middle", "dominant-baseline": "middle",
+      transform: tr,
+      style: "pointer-events:none;",
     });
+
+    const ts1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+    ts1.setAttribute("x", lp.x.toFixed(2));
+    ts1.setAttribute("dy", arcLen >= 55 ? "-7" : "0");
+    ts1.setAttribute("font-family", "DM Mono,monospace");
+    ts1.setAttribute("font-size", "8.5");
+    ts1.setAttribute("font-weight", "500");
+    ts1.setAttribute("fill", "rgba(255,255,255,0.60)");
+    ts1.setAttribute("letter-spacing", "0.07em");
+    ts1.textContent = "CH." + ch.num;
+    t.appendChild(ts1);
+
+    if (arcLen >= 55) {
+      const ts2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+      ts2.setAttribute("x", lp.x.toFixed(2));
+      ts2.setAttribute("dy", "14");
+      ts2.setAttribute("font-family", "DM Sans,sans-serif");
+      ts2.setAttribute("font-size", "9.5");
+      ts2.setAttribute("font-weight", "400");
+      ts2.setAttribute("fill", "rgba(255,255,255,0.90)");
+      ts2.textContent = ch.abbr;
+      t.appendChild(ts2);
+    }
+    labs.appendChild(t);
   });
 
-  // Attach events
+  document.querySelectorAll(".chapter-seg").forEach(el => {
+    el.addEventListener("mouseenter", onChEnter);
+    el.addEventListener("mousemove",  onMove);
+    el.addEventListener("mouseleave", onLeave);
+    el.addEventListener("click",      onChapterClick);
+    el.addEventListener("keydown", ev => {
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); onChapterClick.call(el); }
+    });
+  });
+}
+
+function buildExpandedState(cat, chRing, emRing, labs) {
+  const activeEmotions = catMap[cat] || [];
+  const N = activeEmotions.length;
+  const degPerEmoExp = 360 / N;
+
+  // Chapter ring (narrow)
+  layout.forEach(({ch, emotions, sa, ea}) => {
+    const isActive = ch.cat === cat;
+    const cp = svgEl("path", {
+      d: arc(R_CH_IN, R_CH_OUT_EXP, sa, ea),
+      fill: ch.color,
+      "data-cat": ch.cat,
+      class: "wheel-segment chapter-seg" + (isActive ? " ch-active" : " ch-dimmed"),
+      tabindex: "0",
+      role: "button",
+      "aria-pressed": String(isActive),
+      "aria-label": `Chapter ${ch.num}: ${ch.short}`,
+    });
+    chRing.appendChild(cp);
+
+    const mid    = (sa + ea) / 2;
+    const span   = ea - sa;
+    const arcLen = R_CH_MID_EXP * span * Math.PI / 180;
+    if (arcLen < 15) return;
+
+    const lp   = p2c(R_CH_MID_EXP, mid);
+    const flip = mid > 180 && mid < 360;
+    const rot  = (mid - 90) + (flip ? 180 : 0);
+
+    const t = svgEl("text", {
+      x: lp.x.toFixed(2), y: lp.y.toFixed(2),
+      "text-anchor": "middle", "dominant-baseline": "middle",
+      fill: isActive ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.45)",
+      "font-family": "DM Mono,monospace",
+      "font-size": "8",
+      "font-weight": "500",
+      transform: `rotate(${rot.toFixed(1)},${lp.x.toFixed(2)},${lp.y.toFixed(2)})`,
+      style: "pointer-events:none;",
+    });
+    t.textContent = String(ch.num);
+    labs.appendChild(t);
+  });
+
+  // Emotion ring (full 360°)
+  activeEmotions.forEach((emo, i) => {
+    const esa = i * degPerEmoExp;
+    const eea = (i + 1) * degPerEmoExp;
+    const ep = svgEl("path", {
+      d: arc(R_EM_IN, R_EM_OUT, esa, eea),
+      fill: emo.color,
+      "data-id": emo.id,
+      "data-cat": emo.cat,
+      class: "wheel-segment emotion-seg" + (activeEmoId === emo.id ? " active-segment" : ""),
+      tabindex: "0",
+      role: "button",
+      "aria-label": emo.name,
+    });
+    emRing.appendChild(ep);
+
+    const emid  = (esa + eea) / 2;
+    const elp   = p2c(R_EM_MID, emid);
+    const eflip = emid > 180 && emid < 360;
+    const erot  = (emid - 90) + (eflip ? 180 : 0);
+
+    const et = svgEl("text", {
+      x: elp.x.toFixed(2), y: elp.y.toFixed(2),
+      "text-anchor": "middle", "dominant-baseline": "middle",
+      fill: "rgba(255,255,255,0.90)",
+      "font-family": "DM Sans,sans-serif",
+      "font-size": N > 8 ? "9.5" : "10.5",
+      "font-weight": "400",
+      transform: `rotate(${erot.toFixed(1)},${elp.x.toFixed(2)},${elp.y.toFixed(2)})`,
+      style: "pointer-events:none;",
+    });
+    et.textContent = emo.name;
+    labs.appendChild(et);
+  });
+
+  // Events
   document.querySelectorAll(".emotion-seg").forEach(el => {
     el.addEventListener("mouseenter", onEmoEnter);
     el.addEventListener("mousemove",  onMove);
@@ -823,7 +928,37 @@ function renderWheel() {
     el.addEventListener("mouseenter", onChEnter);
     el.addEventListener("mousemove",  onMove);
     el.addEventListener("mouseleave", onLeave);
+    el.addEventListener("click",      onChapterClick);
+    el.addEventListener("keydown", ev => {
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); onChapterClick.call(el); }
+    });
   });
+}
+
+function updateHub(cat) {
+  const hubText = document.getElementById("hub-text");
+  hubText.innerHTML = "";
+  const mk = (content, y, cls) => {
+    const t = svgEl("text", {x:"350", y:String(y), "text-anchor":"middle", class:cls});
+    t.textContent = content;
+    return t;
+  };
+  if (cat === null) {
+    hubText.appendChild(mk("ATLAS OF",  "342", "hub-hint"));
+    hubText.appendChild(mk("THE HEART", "354", "hub-hint"));
+    hubText.appendChild(mk("▸ click a chapter", "368", "hub-hint"));
+  } else {
+    const ch = CHAPTERS.find(c => c.cat === cat);
+    hubText.appendChild(mk("CH. " + ch.num, ch.hubLine ? "338" : "343", "hub-chnum"));
+    hubText.appendChild(mk(ch.abbr,          ch.hubLine ? "351" : "357", "hub-chname"));
+    if (ch.hubLine) hubText.appendChild(mk(ch.hubLine, "363", "hub-chname"));
+  }
+}
+
+function onChapterClick() {
+  if (document.getElementById("chapter-ring").style.opacity === "0") return;
+  const cat = this.dataset.cat;
+  transitionTo(activeCat === cat ? null : cat);
 }
 
 // ── TOOLTIP ──
@@ -862,13 +997,13 @@ function onEmoClick() {
   const id = this.dataset.id;
   const emo = E.find(e => e.id === id);
   if (!emo) return;
-  if (activeId === id) {
-    activeId = null;
+  if (activeEmoId === id) {
+    activeEmoId = null;
     document.querySelectorAll(".emotion-seg.active-segment").forEach(s => s.classList.remove("active-segment"));
     hideDetail();
     return;
   }
-  activeId = id;
+  activeEmoId = id;
   document.querySelectorAll(".emotion-seg.active-segment").forEach(s => s.classList.remove("active-segment"));
   this.classList.add("active-segment");
   showDetail(emo);
@@ -906,7 +1041,7 @@ function showDetail(e) {
     </div>`;
   panel.classList.add("visible");
   document.getElementById("dc").onclick = () => {
-    activeId = null;
+    activeEmoId = null;
     document.querySelectorAll(".emotion-seg.active-segment").forEach(s => s.classList.remove("active-segment"));
     hideDetail();
   };
@@ -920,48 +1055,95 @@ function hideDetail() {
 }
 
 // ── LEGEND ──
-function renderLegend() {
+function renderLegend(cat) {
   const leg = document.getElementById("legend");
-  leg.innerHTML = CHAPTERS.map(ch => `
-    <div class="legend-item" data-cat="${ch.cat}" title="${(catMap[ch.cat]||[]).map(e=>e.name).join(', ')}">
-      <div class="legend-swatch" style="background:${ch.color}"></div>
-      <span><span class="legend-num">Ch.${ch.num}&nbsp;</span>${ch.short}</span>
-    </div>`).join("");
+  leg.innerHTML = "";
 
-  let activeFilter = null;
-  leg.querySelectorAll(".legend-item").forEach(item => {
-    item.addEventListener("click", () => {
-      const cat = item.dataset.cat;
-      if (activeFilter === cat) {
-        activeFilter = null;
-        resetOpacity();
-        leg.querySelectorAll(".legend-item").forEach(i => i.classList.remove("hi"));
-      } else {
-        activeFilter = cat;
-        document.querySelectorAll(".emotion-seg").forEach(s => {
-          s.style.opacity = s.dataset.cat === cat ? "1" : "0.15";
-        });
-        document.querySelectorAll(".chapter-seg").forEach(s => {
-          s.style.opacity = s.dataset.cat === cat ? "1" : "0.25";
-        });
-        leg.querySelectorAll(".legend-item").forEach(i => i.classList.toggle("hi", i.dataset.cat === cat));
-      }
+  if (cat === null) {
+    // Idle: chapter grid
+    let legendFilter = null;
+    leg.innerHTML = CHAPTERS.map(ch => `
+      <div class="legend-item" data-cat="${ch.cat}" title="${(catMap[ch.cat]||[]).map(e=>e.name).join(', ')}">
+        <div class="legend-swatch" style="background:${ch.color}"></div>
+        <span><span class="legend-num">Ch.${ch.num}&nbsp;</span>${ch.short}</span>
+      </div>`).join("");
+
+    leg.querySelectorAll(".legend-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const itemCat = item.dataset.cat;
+        if (legendFilter === itemCat) {
+          legendFilter = null;
+          resetOpacity();
+          leg.querySelectorAll(".legend-item").forEach(i => i.classList.remove("hi"));
+        } else {
+          legendFilter = itemCat;
+          document.querySelectorAll(".chapter-seg").forEach(s => {
+            s.style.opacity = s.dataset.cat === itemCat ? "1" : "0.18";
+          });
+          leg.querySelectorAll(".legend-item").forEach(i => i.classList.toggle("hi", i.dataset.cat === itemCat));
+        }
+      });
     });
-  });
+  } else {
+    // Expanded: emotion list for active chapter
+    const ch = CHAPTERS.find(c => c.cat === cat);
+    const emotions = catMap[cat] || [];
+    leg.innerHTML = `
+      <div style="grid-column:1/-1;padding:3px 0 7px;border-bottom:0.5px solid var(--border-mid);margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;">
+        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted);">Ch. ${ch.num} &mdash; ${ch.short}</span>
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">${emotions.length} emotions</span>
+      </div>` +
+      emotions.map(e => `
+        <div class="legend-item" data-emo-id="${e.id}">
+          <div class="legend-swatch" style="background:${e.color};border-radius:50%;"></div>
+          <span>${e.name}</span>
+        </div>`).join("");
 
-  // Click hub circle to reset
-  document.getElementById("wheel").addEventListener("click", ev => {
-    const tgt = ev.target;
-    if (tgt.tagName === "circle" || tgt.tagName === "text" || tgt.id === "wheel") {
-      activeFilter = null;
-      resetOpacity();
-      leg.querySelectorAll(".legend-item").forEach(i => i.classList.remove("hi"));
-    }
-  });
+    leg.querySelectorAll("[data-emo-id]").forEach(item => {
+      item.addEventListener("click", () => {
+        const emo = E.find(e => e.id === item.dataset.emoId);
+        if (!emo) return;
+        if (activeEmoId === emo.id) {
+          activeEmoId = null;
+          document.querySelectorAll(".emotion-seg.active-segment").forEach(s => s.classList.remove("active-segment"));
+          hideDetail();
+          leg.querySelectorAll("[data-emo-id]").forEach(i => i.classList.remove("hi"));
+        } else {
+          activeEmoId = emo.id;
+          document.querySelectorAll(".emotion-seg.active-segment").forEach(s => s.classList.remove("active-segment"));
+          document.querySelectorAll(`.emotion-seg[data-id="${emo.id}"]`).forEach(s => s.classList.add("active-segment"));
+          showDetail(emo);
+          leg.querySelectorAll("[data-emo-id]").forEach(i => i.classList.toggle("hi", i.dataset.emoId === emo.id));
+        }
+      });
+    });
+  }
 }
 
 function resetOpacity() {
   document.querySelectorAll(".emotion-seg,.chapter-seg").forEach(s => s.style.opacity = "");
+}
+
+// ── GLOBAL LISTENERS (once) ──
+function attachGlobalListeners() {
+  document.getElementById("wheel").addEventListener("click", ev => {
+    const tgt = ev.target;
+    const isHub = tgt.id === "hub-bg" || tgt.closest("#hub-text") !== null || tgt.id === "wheel";
+    if (isHub && activeCat !== null) {
+      transitionTo(null);
+    }
+  });
+  document.addEventListener("keydown", ev => {
+    if (ev.key === "Escape") {
+      if (activeEmoId !== null) {
+        activeEmoId = null;
+        document.querySelectorAll(".emotion-seg.active-segment").forEach(s => s.classList.remove("active-segment"));
+        hideDetail();
+      } else if (activeCat !== null) {
+        transitionTo(null);
+      }
+    }
+  });
 }
 
 // ── THEME ──
@@ -973,13 +1155,14 @@ toggle.addEventListener("click", () => {
   document.body.classList.toggle("light-mode", isLight);
   lbl.textContent = isLight ? "Dark" : "Light";
   document.querySelector("html").style.background = isLight ? "#ffffff" : "#0d0d0d";
-  // Update hub
-  document.querySelector("#wheel circle").setAttribute("fill", isLight ? "#ffffff" : "#0d0d0d");
+  document.getElementById("hub-bg").setAttribute("fill", isLight ? "#ffffff" : "#0d0d0d");
 });
 
 // ── INIT ──
-renderWheel();
-renderLegend();
+buildWheel(null);
+updateHub(null);
+renderLegend(null);
+attachGlobalListeners();
 </script>
 </body>
 </html>
