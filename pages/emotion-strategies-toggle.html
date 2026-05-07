@@ -134,7 +134,7 @@
       <button class="filter-btn" data-filter="uncertainty">Ch.1 · Uncertainty &amp; Fear</button>
       <button class="filter-btn" data-filter="comparison">Ch.2 · Comparison</button>
       <button class="filter-btn" data-filter="unplanned">Ch.3 · When Plans Fail</button>
-      <button class="filter-btn" data-filter="beyond">Ch.4 · Awe &amp; Wonder</button>
+      <button class="filter-btn" data-filter="beyond">Ch.4 · Beyond Us</button>
       <button class="filter-btn" data-filter="not-as-they-seem">Ch.5 · Not What They Seem</button>
       <button class="filter-btn" data-filter="hurting">Ch.6 · Hurting &amp; Grief</button>
       <button class="filter-btn" data-filter="with-others">Ch.7 · With Others</button>
@@ -143,7 +143,7 @@
       <button class="filter-btn" data-filter="heart-open">Ch.10 · Heart Open</button>
       <button class="filter-btn" data-filter="life-good">Ch.11 · Life is Good</button>
       <button class="filter-btn" data-filter="wronged">Ch.12 · Wronged &amp; Anger</button>
-      <button class="filter-btn" data-filter="self-assess">Ch.13 · Self-Assessment</button>
+      <button class="filter-btn" data-filter="self-assess">Ch.13 · To Self-Assess</button>
     </div>
   </div>
 
@@ -250,29 +250,41 @@ const E = [
    avoid:"Stewing silently — resentment grows in silence.",
    support:["Help them identify the unspoken expectation or unset boundary underneath the resentment","Avoid validating the resentment without also exploring what needs to change","Encourage them to have the difficult conversation rather than carrying it","Don't fuel it by adding your own grievances about the same person"]},
 
-  {id:"contempt",name:"Contempt",ch:"Ch. 2 · Comparison",tag:"A sense of moral superiority over another",cat:"comparison",color:"#684830",
+  {id:"contempt",name:"Contempt",ch:"Ch. 12 · Wronged & Anger",tag:"A sense of moral superiority over another",cat:"wronged",color:"#684830",
    signal:"Contempt communicates 'I am better than you' and is one of the most corrosive interpersonal emotions. Gottman identifies it as the strongest predictor of relationship dissolution.",
    strats:["Recognize it as a relationship killer and treat it urgently","Examine what unmet need or resentment is underneath it","Build a culture of appreciation to counteract contemptuous patterns","Seek to understand before judging"],
    avoid:"Expressing it — contempt almost never achieves its aim and causes lasting damage.",
    support:["Name what you observe carefully: 'it sounds like you've really lost respect for them'","Help them trace contempt back to the original wound or resentment","If they're on the receiving end, validate the pain — contempt is devastating","Encourage professional support if contempt is entrenched in a key relationship"]},
 
-  {id:"disgust",name:"Disgust",ch:"Ch. 2 · Comparison",tag:"A moral or physical violation detected",cat:"comparison",color:"#587040",
+  {id:"disgust",name:"Disgust",ch:"Ch. 12 · Wronged & Anger",tag:"A moral or physical violation detected",cat:"wronged",color:"#587040",
    signal:"Disgust evolved to protect from contamination but extends to moral violations. It signals a perceived breach of deeply held values.",
    strats:["Pause before acting — disgust can distort moral judgment","Examine whether this is physical revulsion or moral conflict","Separate the person from the behavior","Use it to clarify your values, not as permission to dehumanize"],
    avoid:"Letting moral disgust slide into dehumanization.",
    support:["Acknowledge the strength of the feeling without necessarily validating the conclusion","Help them slow down before acting on it — disgust moves fast","Encourage them to examine whether the disgust is about a behavior or a person","Gently surface the values underneath: 'what matters to you that this violated?'"]},
 
-  {id:"dehumanization",name:"Dehumanization",ch:"Ch. 2 · Comparison",tag:"Seeing others as less than fully human",cat:"comparison",color:"#583820",
+  {id:"dehumanization",name:"Dehumanization",ch:"Ch. 12 · Wronged & Anger",tag:"Seeing others as less than fully human",cat:"wronged",color:"#583820",
    signal:"Dehumanization is the process of seeing others as objects or inferior beings. Brown identifies it as one of the most dangerous human patterns — the precondition for violence and atrocity.",
    strats:["Recognize it in language and imagery — it often starts there","Counter it with humanizing information about the group or person","Challenge dehumanizing speech even when uncomfortable","Examine your own in-group/out-group thinking honestly"],
    avoid:"Treating it as merely a strong opinion — dehumanization has preceded every major atrocity.",
    support:["Name it clearly if you observe it — silence signals permission","Introduce specific, humanizing information about the dehumanized group","Don't match the emotional intensity — stay grounded and curious","This may require professional or community intervention if entrenched"]},
 
-  {id:"hate",name:"Hate",ch:"Ch. 2 · Comparison",tag:"Intense hostility and aversion",cat:"comparison",color:"#782020",
+  {id:"hate",name:"Hate",ch:"Ch. 12 · Wronged & Anger",tag:"Intense hostility and aversion",cat:"wronged",color:"#782020",
    signal:"Hate is sustained by dehumanization and disconnection from the shared humanity of those we hate. Brown examines how it poisons the person carrying it as much as the target.",
    strats:["Examine what need or wound is fueling the intensity","Reconnect with the humanity of those you are hostile toward","Seek perspective from those who have moved through hatred toward forgiveness","Work with a professional if hate is consuming significant energy"],
    avoid:"Acting from it without reflection — hate is not a reliable guide to right action.",
    support:["Stay connected rather than cutting them off if safe to do so — isolation deepens hate","Don't argue or debate — it hardens positions","Express love for the person while not affirming the hatred","Encourage exposure to humanizing stories and experiences of the hated group"]},
+
+  {id:"schadenfreude",name:"Schadenfreude",ch:"Ch. 2 · Comparison",tag:"Pleasure at another's misfortune",cat:"comparison",color:"#6A3828",
+   signal:"Schadenfreude is the pleasure derived from someone else's misfortune. Brown places it in the comparison chapter as an extreme end of the envy spectrum — and connects it directly to dehumanization as a warning: when we strip others of their humanity, their suffering can even produce pleasure. It signals that something deeper, like unprocessed resentment or envy, may be driving the feeling.",
+   strats:["Name it honestly — acknowledging it is the first step to examining it","Get curious about what envy, resentment, or pain is underneath it","Practice freudenfreude as the direct counterweight — consciously celebrate the same person's next success","Reconnect with the full humanity of the person whose misfortune pleased you"],
+   avoid:"Treating it as harmless or just 'dark humor' — schadenfreude is a signal that dehumanization may be beginning.",
+   support:["Don't shame them — naming it together is more productive than condemnation","Help them identify the underlying envy or resentment that schadenfreude is masking","Introduce humanizing stories about the person they're observing","Model freudenfreude in their presence — celebrating others' success can shift the emotional climate"]},
+
+  {id:"freudenfreude",name:"Freudenfreude",ch:"Ch. 2 · Comparison",tag:"Joy in another's success",cat:"comparison",color:"#4A8858",
+   signal:"Freudenfreude is the opposite of schadenfreude — experiencing genuine joy at another person's success or happiness, even when it has nothing to do with you. Brown introduces this term as one of the most powerful antidotes to comparison and envy, describing it as a subset of empathy. She connects it to 'shoy' — the active practice of sharing someone else's joy — and 'bragitude,' expressing genuine pride in others. The more we practice freudenfreude, the less comparison corrodes us.",
+   strats:["Practice it intentionally — when someone succeeds, pause and notice whether you can access genuine happiness for them","Express it directly: tell people you're genuinely delighted for them","Use it as the antidote when you notice envy or schadenfreude arising","Build a culture of freudenfreude in your relationships — celebrate others' wins as if they were your own"],
+   avoid:"Performing it while still feeling envious inside — genuine freudenfreude requires doing the inner work on comparison first.",
+   support:["Model it — your genuine celebration of others' success gives those around you permission to do the same","Notice and name it when you observe it: 'I love how happy you are for them'","Create rituals of celebrating others' wins together — it builds the freudenfreude muscle over time","If someone is stuck in envy or comparison, gently invite them toward it: 'what's one thing you genuinely appreciate about how this went for them?'"]},
 
   // ── CH 3 · WHEN PLANS FAIL ──
   {id:"boredom",name:"Boredom",ch:"Ch. 3 · When Plans Fail",tag:"This isn't engaging you at the right level",cat:"unplanned",color:"#7A8A60",
@@ -299,56 +311,56 @@ const E = [
    avoid:"Ruminating indefinitely — once the lesson is extracted and repair is made, continued regret is suffering with no return.",
    support:["Help them separate what they knew then from what they know now — don't let them hold past-self to present-self standards","Ask: 'what would you want to do differently going forward?'","Gently interrupt rumination loops by bringing them back to the present","If amends are possible, encourage that action as a path through the regret"]},
 
-  {id:"discouragement",name:"Discouragement",ch:"Ch. 3 · When Plans Fail",tag:"Progress feels impossible",cat:"unplanned",color:"#806050",
-   signal:"Discouragement arises when effort doesn't seem to produce results. It signals a gap between investment and visible outcomes, often appearing when the path is longer than expected.",
+  {id:"discouragement",name:"Discouragement",ch:"Ch. 3 · When Plans Fail",tag:"Losing confidence and enthusiasm for future effort",cat:"unplanned",color:"#806050",
+   signal:"Brown's precise definition: discouragement is 'I'm losing my confidence and enthusiasm about any future effort' — the loss is in process, not yet complete. It's the feeling that the path is longer or harder than expected and your resolve is draining, but you haven't yet given up entirely.",
    strats:["Zoom out and look at progress over a longer time horizon","Talk to someone who has navigated similar setbacks","Celebrate small process wins, not just outcomes","Reconnect with why the goal matters"],
    avoid:"Quitting in the trough — discouragement often peaks just before a breakthrough.",
    support:["Reflect back the progress they can't see from inside the experience","Share stories of people who persisted through similar discouraging periods","Don't offer empty optimism — acknowledge that it is genuinely hard","Help them reconnect with their original why, not just the outcome they're missing"]},
 
-  {id:"resignation",name:"Resignation",ch:"Ch. 3 · When Plans Fail",tag:"You've stopped believing change is possible",cat:"unplanned",color:"#706060",
-   signal:"Resignation is deeper than discouragement — a settled belief that nothing will improve. It signals learned helplessness: a loss of the sense of agency.",
+  {id:"resignation",name:"Resignation",ch:"Ch. 3 · When Plans Fail",tag:"Confidence and enthusiasm for future effort are gone",cat:"unplanned",color:"#706060",
+   signal:"Brown's precise definition: resignation is 'I've lost my confidence and enthusiasm about any future effort' — the loss is complete, not in process. Where discouragement is still losing ground, resignation has already surrendered it. It signals learned helplessness: a settled belief that effort and outcome have been permanently decoupled.",
    strats:["Examine whether the hopelessness is situational or global","Identify one small thing in your control and act on it","Seek perspective from outside your current frame","Ask whether the situation is unchangeable or you've stopped trying"],
    avoid:"Accepting it as truth without examination — resignation is a feeling, not a fact.",
    support:["Don't argue them out of it — resignation doesn't yield to logic","Help them identify one small action that is genuinely within their control","Be a source of external hope when theirs has run out — not by performing optimism, but by staying present","Consider whether professional support is needed if it has become pervasive"]},
 
-  {id:"frustration",name:"Frustration",ch:"Ch. 3 · When Plans Fail",tag:"A goal is persistently blocked",cat:"unplanned",color:"#B85828",
-   signal:"Frustration arises when progress toward a goal is blocked and efforts keep failing. It signals a need to either address the obstacle or adapt the approach.",
-   strats:["Identify specifically what is blocking you","Ask: can the obstacle be removed, or must I adapt?","Take a break to restore cognitive flexibility","Distinguish frustration at the situation from frustration at a person"],
+  {id:"frustration",name:"Frustration",ch:"Ch. 3 · When Plans Fail",tag:"The situation feels unresolvable",cat:"unplanned",color:"#B85828",
+   signal:"Brown defines frustration as the feeling that a situation is unresolvable — not just blocked, but stuck in a way that seems permanent. It signals that repeated effort hasn't produced the expected result, and the gap between what is and what should be feels insurmountable.",
+   strats:["Challenge the 'unresolvable' belief — is it truly stuck, or does the approach need to change?","Identify specifically what is blocking you","Ask: can the obstacle be removed, or must the path change entirely?","Take a break to restore cognitive flexibility before attempting again"],
    avoid:"Displacement — taking frustration out on whoever is nearest rather than addressing the actual obstacle.",
    support:["Let them vent before problem-solving — frustration needs to move before strategy can land","Ask: 'is the obstacle something that can be changed or worked around?'","Don't immediately offer solutions — first acknowledge how hard it is to keep hitting the same wall","If they're taking it out on others, gently name that without shaming"]},
 
-  // ── CH 4 · AWE & WONDER ──
-  {id:"awe",name:"Awe",ch:"Ch. 4 · Awe & Wonder",tag:"You've encountered something vast",cat:"beyond",color:"#2878B0",
+  // ── CH 4 · BEYOND US ──
+  {id:"awe",name:"Awe",ch:"Ch. 4 · Beyond Us",tag:"You've encountered something vast",cat:"beyond",color:"#2878B0",
    signal:"Awe arises when we encounter something so vast — in size, beauty, or meaning — that it challenges our existing frameworks. It requires the mind to grow to hold the experience.",
    strats:["Let yourself be small — awe benefits from surrender, not analysis","Seek it intentionally: nature, music, art, acts of courage","Use it to recalibrate perspective when caught in small worries","Share it — awe is one of the most socially bonding emotions"],
    avoid:"Rushing back to ordinary consciousness too quickly — awe requires time to land.",
    support:["Share in the experience rather than observing from the outside","Don't intellectualise it — analysis kills awe","Ask open questions: 'what does it feel like to be in the middle of that?'","Seek awe together — shared awe is one of the fastest routes to deep connection"]},
 
-  {id:"wonder",name:"Wonder",ch:"Ch. 4 · Awe & Wonder",tag:"Openness to what's possible",cat:"beyond",color:"#3080B0",
+  {id:"wonder",name:"Wonder",ch:"Ch. 4 · Beyond Us",tag:"Openness to what's possible",cat:"beyond",color:"#3080B0",
    signal:"Wonder is awe's quieter counterpart — an openness and curiosity about what is possible beyond current knowledge. It signals a mind that hasn't closed itself off.",
    strats:["Ask 'I wonder...' questions regularly","Approach familiar things as if encountering them for the first time","Protect time for exploratory thinking without agenda","Model it for others — wonder is contagious"],
    avoid:"Letting certainty crowd it out — wonder requires tolerance for not-knowing.",
    support:["Ask 'I wonder...' questions alongside them to co-create the experience","Resist answering their wondering too quickly — hold the space","Create environments together that invite exploration without pressure","Model your own wonder — it gives permission for theirs"]},
 
-  {id:"curiosity",name:"Curiosity",ch:"Ch. 4 · Awe & Wonder",tag:"There's something worth understanding here",cat:"beyond",color:"#288A78",
+  {id:"curiosity",name:"Curiosity",ch:"Ch. 4 · Beyond Us",tag:"There's something worth understanding here",cat:"beyond",color:"#288A78",
    signal:"Curiosity is a pull toward information, experience, or understanding. Brown notes that curiosity and judgment cannot easily coexist — it is a powerful antidote to contempt.",
    strats:["Follow it even when it's not immediately 'useful'","Ask one more question before reaching a conclusion","Let curiosity be your antidote to judgment","Create conditions for it: unstructured time, novel inputs"],
    avoid:"Treating it as a luxury — curiosity is foundational to creativity, empathy, and learning.",
    support:["Ask curious questions rather than giving answers — your curiosity can spark theirs","Celebrate their questions and explorations, not just their conclusions","Create space for them to pursue threads that may seem unproductive","Don't redirect their curiosity toward what you think is more useful"]},
 
-  {id:"interest",name:"Interest",ch:"Ch. 4 · Awe & Wonder",tag:"Something has caught your attention",cat:"beyond",color:"#2A9080",
+  {id:"interest",name:"Interest",ch:"Ch. 4 · Beyond Us",tag:"Something has caught your attention",cat:"beyond",color:"#2A9080",
    signal:"Interest is a positive emotional state that orients us toward exploring something new. It is the seed from which curiosity grows.",
    strats:["Follow the thread — interest is often the leading edge of passion","Notice what reliably captures your attention","Protect time to explore without productivity pressure","Share your interests — expressed interest creates connection"],
    avoid:"Dismissing interest as distraction — it is often the entry point to meaningful work.",
    support:["Express genuine interest in their interest — ask questions with real curiosity","Connect their interest to resources, people, or experiences that could deepen it","Don't redirect to more 'practical' topics too quickly","Remember what they're interested in and follow up — it shows you're paying attention"]},
 
-  {id:"surprise",name:"Surprise",ch:"Ch. 4 · Awe & Wonder",tag:"Reality didn't match your prediction",cat:"beyond",color:"#7860B0",
+  {id:"surprise",name:"Surprise",ch:"Ch. 4 · Beyond Us",tag:"Reality didn't match your prediction",cat:"beyond",color:"#7860B0",
    signal:"Surprise fires briefly when reality differs from prediction — a neural alert that new information is incoming. It primes the brain for updating its model of the world.",
    strats:["Pause before reacting — surprise briefly clouds judgment","Update your mental model with the new information","Notice whether your surprise reveals an unexamined assumption","Allow positive surprises to fully register"],
    avoid:"Anchoring on your original prediction after being surprised — the update is the point.",
    support:["Give them time to process before asking for a reaction","If positive surprise, help them savour it rather than immediately moving on","If negative surprise, acknowledge the disorientation before problem-solving","Help them identify what assumption was challenged — that's the growth edge"]},
 
-  {id:"confusion",name:"Confusion",ch:"Ch. 4 · Awe & Wonder",tag:"You don't have enough information yet",cat:"beyond",color:"#6868A8",
+  {id:"confusion",name:"Confusion",ch:"Ch. 4 · Beyond Us",tag:"You don't have enough information yet",cat:"beyond",color:"#6868A8",
    signal:"Confusion signals a gap between what you understood and what is actually happening. It can be the doorway to learning — a sign that growth is being demanded.",
    strats:["Stay with confusion a moment before resolving it — something is integrating","Ask clarifying questions without embarrassment","Seek information from multiple sources","Distinguish productive confusion (learning) from chronic confusion (avoidance)"],
    avoid:"Pretending to understand when you don't — false clarity prevents real learning.",
@@ -423,7 +435,7 @@ const E = [
    support:["Sit with them in it rather than trying to lift them out of it prematurely","Name what was lost alongside them: 'that was a real loss'","Avoid silver-linings until the sadness has been fully acknowledged","Check in again later — sadness doesn't resolve in a single conversation"]},
 
   {id:"grief",name:"Grief",ch:"Ch. 6 · Hurting & Grief",tag:"Love with nowhere to go",cat:"hurting",color:"#185EB0",
-   signal:"Brown describes grief as 'love with nowhere to go.' We grieve any significant loss: a person, a relationship, a dream, a version of ourselves. Grief is love meeting absence.",
+   signal:"Brown describes grief as 'love with nowhere to go.' We grieve any significant loss: a person, a relationship, a dream, a version of ourselves. Brown identifies three intertwined elements: Loss (the foundational experience of absence), Longing (a reflexive, deep desire colored by sadness for what is gone), and Feeling Lost (grief forces rearrangement of one's entire life — who am I now?). Grief must be shared to be processed; it cannot be thought or willed away.",
    strats:["Allow it — grief not moved through gets stored in the body","Resist the urge to timeline or rush the process","Seek people who can sit with you without trying to fix it","Honor what was lost rather than only focusing on moving on"],
    avoid:"Grief avoidance — the only way through grief is through it.",
    support:["Follow their timeline, not a grief stage checklist","Say the name of who or what was lost — don't avoid it","Show up repeatedly — grief doesn't end after the funeral or the first week","Ask about the person or thing that was lost — let them tell you about it"]},
@@ -436,7 +448,7 @@ const E = [
    support:["If they're struggling to extend compassion to themselves, model it explicitly: 'what would you say to a friend in this situation?'","Help them identify where their limits are so they can care sustainably","Affirm that their compassion for others is a strength, not a weakness","Watch for signs of compassion fatigue and name it if you see it"]},
 
   {id:"pity",name:"Pity",ch:"Ch. 7 · With Others",tag:"Feeling sorry for someone from a distance",cat:"with-others",color:"#786050",
-   signal:"Pity involves feeling sorry for someone in a way that creates distance and implies superiority. Brown distinguishes it sharply from compassion and empathy.",
+   signal:"Brown applies the Buddhist concept of 'near enemies' — emotions that look like virtuous states but undermine them. Pity is the near enemy of compassion: it looks like care but carries a sense of superiority, focuses on one's own reaction, and maintains distance. Where compassion says 'I see your suffering and I am with you,' pity says 'I feel sorry for you — and I'm glad it's not me.' It creates hierarchy, not connection.",
    strats:["Notice when pity creates distance rather than connection","Ask yourself: am I feeling with this person or above them?","Move from pity toward curiosity about their actual experience","Resist the self-congratulatory quality of pity"],
    avoid:"Offering pity as a substitute for genuine presence — it communicates 'you are unfortunate' not 'you are not alone.'",
    support:["If you notice you're pitying rather than connecting, get curious about their experience instead","Ask questions that humanize rather than observe from a distance","Resist framing their situation as something that 'could never happen to me'","Move toward them rather than observing from outside"]},
@@ -448,7 +460,7 @@ const E = [
    support:["Ask 'what does it feel like?' rather than 'what happened?'","Reflect back what you're hearing before offering any perspective","Resist the impulse to share a similar story of your own — keep the focus on them","Tolerate the discomfort of sitting with them in pain without needing to resolve it"]},
 
   {id:"sympathy",name:"Sympathy",ch:"Ch. 7 · With Others",tag:"Feeling for someone from a distance",cat:"with-others",color:"#487888",
-   signal:"Sympathy is genuine care that maintains distance. Brown notes it doesn't create the same depth of connection as empathy, though it is genuine acknowledgment of someone's difficulty.",
+   signal:"Brown applies the 'near enemy' concept here too: sympathy is the near enemy of empathy. Where empathy says 'me too — I feel with you,' sympathy says 'not me, but I feel sorry for you.' Sympathy is genuine care that maintains distance and implies a difference in position. Brown's formulation: sympathy is preoccupied with one's own reaction to another's pain, rather than entering that pain alongside them.",
    strats:["Recognize when empathy is being called for vs. sympathy","Express it genuinely without performing more than you feel","Use it as a foundation to move toward deeper connection","Be honest about your capacity"],
    avoid:"Offering sympathy when someone needs empathy — sometimes people need to feel less alone, not just acknowledged.",
    support:["Notice when your sympathy is keeping you at a safe distance and ask whether they need more","Check in: 'do you want me to just listen or would it help to talk through it?'","Don't assume sympathy is enough — follow their lead","Acknowledge if empathy is hard for you in this moment — honesty is better than performed feeling"]},
@@ -478,8 +490,8 @@ const E = [
    avoid:"Confusing it with self-pity — self-compassion acknowledges difficulty without wallowing.",
    support:["Ask: 'what would you say to your best friend if they were in this situation?' Then reflect it back","Model self-compassion yourself — it gives permission","Challenge the double standard gently: 'you'd never say that to someone you love'","Don't confuse encouraging self-compassion with encouraging avoidance of accountability"]},
 
-  {id:"perfectionism",name:"Perfectionism",ch:"Ch. 8 · Falling Short",tag:"Trying to earn love through performance",cat:"falling-short",color:"#A04060",
-   signal:"Brown defines perfectionism as the belief that looking and doing things perfectly will protect us from shame, blame, and judgment. It is a protection strategy masquerading as a virtue.",
+  {id:"perfectionism",name:"Perfectionism",ch:"Ch. 8 · Falling Short",tag:"A shield against shame disguised as a virtue",cat:"falling-short",color:"#A04060",
+   signal:"Brown's definition: perfectionism is 'a self-destructive and addictive belief system that fuels this primary thought: If I look perfect and do everything perfectly, I can avoid or minimize the painful feelings of shame, judgment, and blame.' It is not about striving for excellence — it is a protection strategy, a way of trying to outrun shame. The goal of perfectionism is not improvement; it is self-protection.",
    strats:["Distinguish healthy striving from perfectionism","Let yourself be seen in the process, not just the finished product","Recognize mistakes as part of growth, not evidence of inadequacy","Practice self-compassion when things go wrong"],
    avoid:"Pursuing perfectionism harder when anxious — it tightens the very trap it claims to solve.",
    support:["Appreciate and affirm their efforts and process, not just outcomes","Normalize your own mistakes and imperfections in their presence","Avoid inadvertently reinforcing perfectionism by only noticing their flawless outputs","Gently explore: 'what do you think would happen if this wasn't perfect?'"]},
@@ -547,7 +559,7 @@ const E = [
 
   // ── CH 10 · HEART OPEN ──
   {id:"love",name:"Love",ch:"Ch. 10 · Heart Open",tag:"We cultivate it when we allow ourselves to be fully seen",cat:"heart-open",color:"#C03868",
-   signal:"Brown defines love as a practice: 'We cultivate love when we allow our most vulnerable and powerful selves to be deeply seen and known.' It signals a safe, cherished connection.",
+   signal:"Brown defines love as a practice: 'We cultivate love when we allow our most vulnerable and powerful selves to be deeply seen and known.' Love is not simply felt — it grows between people through trust, respect, and mutual vulnerability. Drawing on bell hooks, Brown notes that love carries an ethics: it orients us toward the care and growth of another, not just toward our own feelings. It signals a safe, cherished connection.",
    strats:["Practice love as a verb — it is built in daily acts, not grand declarations","Create conditions for mutual vulnerability","Learn the other person's love language and speak it","Protect the relationship from contempt — Gottman identifies it as love's primary destroyer"],
    avoid:"Treating love as unconditional tolerance of harm — love can coexist with limits and should.",
    support:["Show up in the daily acts, not just the big moments","Learn how they receive love and offer it in that form","Name your love explicitly and specifically — tell them what you love about them","Protect the relationship by keeping contempt out — repair quickly when you slip"]},
@@ -662,20 +674,20 @@ const E = [
    avoid:"Using moral certainty as permission to stop listening — the capacity for harm increases with certainty of righteousness.",
    support:["Gently invite curiosity: 'I wonder what was going on for them?'","Don't match their certainty or argue against it directly — it hardens","Ask questions that introduce complexity without attacking their position","Help them separate the legitimate values underneath from the armor on top"]},
 
-  // ── CH 13 · SELF-ASSESSMENT ──
-  {id:"pride",name:"Pride",ch:"Ch. 13 · Self-Assessment",tag:"I did something worth honoring",cat:"self-assess",color:"#6068C0",
+  // ── CH 13 · TO SELF-ASSESS ──
+  {id:"pride",name:"Pride",ch:"Ch. 13 · To Self-Assess",tag:"I did something worth honoring",cat:"self-assess",color:"#6068C0",
    signal:"Authentic pride signals competence and accomplishment earned through effort. Brown distinguishes it from hubris: authentic pride says 'I did something well,' hubris says 'I am better than others.'",
    strats:["Let yourself feel it — authentic pride is earned and healthy","Share it without requiring others to validate it","Connect it to effort and process, not just outcomes","Use it to calibrate what you're capable of pursuing next"],
    avoid:"Suppressing it out of false modesty — refusing to acknowledge genuine accomplishment serves no one.",
    support:["Celebrate their accomplishment specifically — not generically","Acknowledge the effort and process, not just the outcome","Don't minimise with 'false humility' about it being 'not a big deal'","Help them connect the accomplishment to their capability for future endeavours"]},
 
-  {id:"hubris",name:"Hubris",ch:"Ch. 13 · Self-Assessment",tag:"An inflated sense of superiority",cat:"self-assess",color:"#906020",
+  {id:"hubris",name:"Hubris",ch:"Ch. 13 · To Self-Assess",tag:"An inflated sense of superiority",cat:"self-assess",color:"#906020",
    signal:"Hubris is pride's shadow — an inflated sense of importance detached from reality. Brown notes it typically arises from shame and is a compensation strategy.",
    strats:["Actively seek honest feedback from people who will give it","Look for what you don't know — hubris hates uncertainty","Cultivate relationships with people who aren't impressed by status or performance","Stay connected to your own failures and limitations"],
    avoid:"Surrounding yourself only with people who agree with you — hubris feeds on echo chambers.",
    support:["Offer honest, caring feedback even when it's uncomfortable — that's what they actually need","Don't feed the ego to keep the peace — it's not kindness","If you have standing, name the pattern gently: 'I notice you're not taking in much of what others are saying'","Stay in relationship — people only shift hubris inside relationships that can hold honesty"]},
 
-  {id:"humility",name:"Humility",ch:"Ch. 13 · Self-Assessment",tag:"Accurate self-awareness without distortion",cat:"self-assess",color:"#488878",
+  {id:"humility",name:"Humility",ch:"Ch. 13 · To Self-Assess",tag:"Accurate self-awareness without distortion",cat:"self-assess",color:"#488878",
    signal:"True humility per Brown is thinking of yourself less, not thinking less of yourself. It is accurate self-assessment — holding both strengths and limitations. The prerequisite for learning.",
    strats:["Distinguish humility from self-deprecation — they are opposites","Stay genuinely curious and open to being wrong","Give others credit genuinely, not performatively","Lead with questions more than answers"],
    avoid:"Performing humility while privately believing you are superior — false humility is hubris with better optics.",
