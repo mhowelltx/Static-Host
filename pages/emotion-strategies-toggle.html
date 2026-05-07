@@ -107,6 +107,12 @@
   body.light-mode .badge-naming{background:rgba(40,90,170,.12);color:rgba(40,90,170,.85);}
   body.light-mode .badge-reframing{background:rgba(100,70,160,.12);color:rgba(100,70,160,.85);}
   body.light-mode .badge-action{background:rgba(30,100,80,.12);color:rgba(30,100,80,.85);}
+  .badge-self-compassion{background:rgba(220,130,140,.18);color:rgba(240,155,165,.95);}
+  .badge-connection{background:rgba(60,170,160,.18);color:rgba(80,195,185,.95);}
+  .badge-values{background:rgba(200,160,60,.18);color:rgba(225,185,80,.95);}
+  body.light-mode .badge-self-compassion{background:rgba(170,60,80,.1);color:rgba(150,40,60,.85);}
+  body.light-mode .badge-connection{background:rgba(20,120,110,.1);color:rgba(20,110,100,.85);}
+  body.light-mode .badge-values{background:rgba(140,100,10,.1);color:rgba(130,90,10,.85);}
 
   /* STRATEGY MODAL */
   .strat-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:900;display:flex;align-items:center;justify-content:center;padding:1.5rem;animation:fadeO .15s ease;}
@@ -735,13 +741,16 @@ const E = [
 
 // ── STRATEGY TOOLS ──
 let currentStrats = [];
-const STRAT_LABELS = { naming:'name it', reframing:'reframe', action:'act' };
+const STRAT_LABELS = { naming:'name it', reframing:'reframe', action:'act', 'self-compassion':'be kind', connection:'connect', values:'values' };
 
 function categorizeStrategy(text) {
   const t = text.toLowerCase();
   if (/\bname (it|what|the)\b|externalize|speak it\b|recognize it\b|notice when you|identify the specific/.test(t)) return 'naming';
   if (/ask: is this|most likely outcome|challenge the|is it truly|is it absolutely|recall a time|remind yourself you|examine whether|zoom out|distinguish .+ from/.test(t)) return 'reframing';
   if (/act on it\b|take one concrete|do one small|have the convers|make amends|reach out to one|apologize sincerely|break demands into|ask for help explicitly/.test(t)) return 'action';
+  if (/attend to basic|self-compassion|be gentle with yourself|practice self-forgiv|forgive yourself|self-love/.test(t)) return 'self-compassion';
+  if (/do not face it alone|seek comfort in|seek people who|share it\b|share something real/.test(t)) return 'connection';
+  if (/what you value|your own values|maps your.*values|values clarification|clarify your values/.test(t)) return 'values';
   return null;
 }
 
@@ -766,6 +775,24 @@ function openStrategyCard(strat, cat) {
       typeColor: 'rgba(80,180,150,.9)',
       title: 'Next Small Step Planner',
       tool: buildActionTool()
+    },
+    'self-compassion': {
+      typeLabel: 'Strategy Type · Self-Compassion & Care',
+      typeColor: 'rgba(240,155,165,.9)',
+      title: 'Self-Compassion Check-In',
+      tool: buildSelfCompassionTool()
+    },
+    connection: {
+      typeLabel: 'Strategy Type · Seeking Connection',
+      typeColor: 'rgba(80,195,185,.9)',
+      title: 'Connection Prompt',
+      tool: buildConnectionTool()
+    },
+    values: {
+      typeLabel: 'Strategy Type · Values Clarification',
+      typeColor: 'rgba(225,185,80,.9)',
+      title: 'Values Compass',
+      tool: buildValuesTool()
     }
   };
   const cfg = cfgs[cat];
@@ -788,9 +815,12 @@ function openStrategyCard(strat, cat) {
       btn.classList.add('sel');
     });
   });
-  if (cat === 'naming')    initNamingTool(overlay);
-  if (cat === 'reframing') initReframingTool(overlay);
-  if (cat === 'action')    initActionTool(overlay);
+  if (cat === 'naming')           initNamingTool(overlay);
+  if (cat === 'reframing')        initReframingTool(overlay);
+  if (cat === 'action')           initActionTool(overlay);
+  if (cat === 'self-compassion')  initSelfCompassionTool(overlay);
+  if (cat === 'connection')       initConnectionTool(overlay);
+  if (cat === 'values')           initValuesTool(overlay);
 }
 
 function buildNamingTool() {
@@ -909,6 +939,108 @@ function initActionTool(overlay) {
       (when      ? `<p><strong>When:</strong> ${when}</p>` : '') +
       `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">One small step is all you need right now. Action creates momentum — the rest follows from here.</p>`;
     const out = overlay.querySelector('#actionOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+function buildSelfCompassionTool() {
+  return `
+    <p class="tool-q">What would you say to a good friend going through exactly this?</p>
+    <textarea class="tool-ta" id="tSC1" placeholder="Write the words you'd offer them — as warmly as you can…" rows="3"></textarea>
+    <p class="tool-q">How might others feel in a similar situation right now? (You are not alone in this.)</p>
+    <textarea class="tool-ta" id="tSC2" placeholder="Most people facing this would feel…" rows="2"></textarea>
+    <p class="tool-q">Without judging, what are you actually feeling in this moment?</p>
+    <textarea class="tool-ta" id="tSC3" placeholder="Name it plainly, without commentary on whether you should feel it…" rows="2"></textarea>
+    <button class="tool-btn" id="scBtn">Write my self-compassion statement →</button>
+    <div class="tool-out" id="scOut">
+      <p class="tool-out-hd">Your self-compassion statement</p>
+      <div id="scOutTxt"></div>
+    </div>`;
+}
+
+function initSelfCompassionTool(overlay) {
+  overlay.querySelector('#scBtn').addEventListener('click', () => {
+    const kindness  = overlay.querySelector('#tSC1').value.trim();
+    const humanity  = overlay.querySelector('#tSC2').value.trim();
+    const mindful   = overlay.querySelector('#tSC3').value.trim();
+    if (!kindness) { overlay.querySelector('#tSC1').focus(); return; }
+    overlay.querySelector('#scOutTxt').innerHTML =
+      `<p><strong>What I'd tell a friend:</strong> ${kindness}</p>` +
+      (humanity ? `<p><strong>Common humanity:</strong> ${humanity}</p>` : '') +
+      (mindful  ? `<p><strong>What I'm feeling:</strong> ${mindful}</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">The same compassion you'd offer a friend is available to you right now. You are not the exception.</p>`;
+    const out = overlay.querySelector('#scOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+function buildConnectionTool() {
+  return `
+    <p class="tool-q">Who is one person who could be with you in this?</p>
+    <textarea class="tool-ta" id="tCN1" placeholder="Name them — even if reaching out feels hard right now…" rows="1" style="min-height:40px;resize:none;"></textarea>
+    <p class="tool-q">What do you need from them?</p>
+    <div class="tool-scale" id="cnNeedScale">
+      <button class="tool-scale-btn" data-val="just presence">just presence</button>
+      <button class="tool-scale-btn" data-val="to listen">to listen</button>
+      <button class="tool-scale-btn" data-val="practical help">practical help</button>
+      <button class="tool-scale-btn" data-val="distraction">distraction</button>
+    </div>
+    <p class="tool-q">What would you say to reach out? (Draft it here.)</p>
+    <textarea class="tool-ta" id="tCN2" placeholder="Even a short message counts — write a first draft…" rows="3"></textarea>
+    <button class="tool-btn" id="cnBtn">Save this →</button>
+    <div class="tool-out" id="cnOut">
+      <p class="tool-out-hd">Your connection plan</p>
+      <div id="cnOutTxt"></div>
+    </div>`;
+}
+
+function initConnectionTool(overlay) {
+  overlay.querySelector('#cnBtn').addEventListener('click', () => {
+    const person = overlay.querySelector('#tCN1').value.trim();
+    const need   = overlay.querySelector('#cnNeedScale .tool-scale-btn.sel')?.dataset.val || '';
+    const draft  = overlay.querySelector('#tCN2').value.trim();
+    if (!person) { overlay.querySelector('#tCN1').focus(); return; }
+    overlay.querySelector('#cnOutTxt').innerHTML =
+      `<p><strong>Who:</strong> ${person}</p>` +
+      (need  ? `<p><strong>What I need:</strong> ${need}</p>` : '') +
+      (draft ? `<p><strong>What I'll say:</strong> ${draft}</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">You don't have to carry this alone. The first message is the hardest part.</p>`;
+    const out = overlay.querySelector('#cnOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+function buildValuesTool() {
+  return `
+    <p class="tool-q">What value feels like it was violated or activated here?</p>
+    <textarea class="tool-ta" id="tV1" placeholder="e.g. honesty, fairness, connection, freedom, growth, safety, respect, autonomy…" rows="2"></textarea>
+    <p class="tool-q">How central is this value to how you want to live? (1 = somewhat, 5 = core to who I am)</p>
+    <div class="tool-scale" id="vCentralScale">
+      ${[1,2,3,4,5].map(n=>`<button class="tool-scale-btn" data-val="${n}">${n}</button>`).join('')}
+    </div>
+    <p class="tool-q">What would acting in line with this value look like right now?</p>
+    <textarea class="tool-ta" id="tV2" placeholder="One concrete way to honour this value in the current situation…" rows="2"></textarea>
+    <button class="tool-btn" id="vBtn">Build my values statement →</button>
+    <div class="tool-out" id="vOut">
+      <p class="tool-out-hd">Your values statement</p>
+      <div id="vOutTxt"></div>
+    </div>`;
+}
+
+function initValuesTool(overlay) {
+  overlay.querySelector('#vBtn').addEventListener('click', () => {
+    const value    = overlay.querySelector('#tV1').value.trim();
+    const central  = overlay.querySelector('#vCentralScale .tool-scale-btn.sel')?.dataset.val || '';
+    const action   = overlay.querySelector('#tV2').value.trim();
+    if (!value || !action) { overlay.querySelector(!value ? '#tV1' : '#tV2').focus(); return; }
+    overlay.querySelector('#vOutTxt').innerHTML =
+      `<p>I care about <strong>${value}</strong>. In this situation, acting in line with that means: <strong>${action}</strong>.</p>` +
+      (central ? `<p style="margin-top:6px"><strong>How central:</strong> ${central}/5</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">Emotions are often signals that something you deeply value is at stake. This one is telling you something important.</p>`;
+    const out = overlay.querySelector('#vOut');
     out.classList.add('show');
     out.scrollIntoView({ behavior:'smooth', block:'nearest' });
   });
