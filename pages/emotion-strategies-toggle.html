@@ -96,6 +96,44 @@
   body.light-mode .signal-block{border-left-color:rgba(40,90,170,.35);}
   body.light-mode .strats-block{border-left-color:rgba(100,70,160,.35);}
 
+  /* STRATEGY TOOL BADGES */
+  .strat-clickable{cursor:pointer;border-radius:4px;transition:background .12s;}
+  .strat-clickable:hover{background:rgba(255,255,255,.06);}
+  body.light-mode .strat-clickable:hover{background:rgba(0,0,0,.05);}
+  .strat-badge{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle;opacity:.85;pointer-events:none;}
+  .badge-naming{background:rgba(120,160,220,.18);color:rgba(140,180,240,.95);}
+  .badge-reframing{background:rgba(160,130,210,.18);color:rgba(180,150,230,.95);}
+  .badge-action{background:rgba(80,180,150,.18);color:rgba(80,180,150,.95);}
+  body.light-mode .badge-naming{background:rgba(40,90,170,.12);color:rgba(40,90,170,.85);}
+  body.light-mode .badge-reframing{background:rgba(100,70,160,.12);color:rgba(100,70,160,.85);}
+  body.light-mode .badge-action{background:rgba(30,100,80,.12);color:rgba(30,100,80,.85);}
+
+  /* STRATEGY MODAL */
+  .strat-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:900;display:flex;align-items:center;justify-content:center;padding:1.5rem;animation:fadeO .15s ease;}
+  @keyframes fadeO{from{opacity:0;}to{opacity:1;}}
+  .strat-card{background:var(--bg-surface);border:0.5px solid var(--border-strong);border-radius:var(--radius-xl);max-width:500px;width:100%;max-height:88vh;overflow-y:auto;padding:1.5rem;position:relative;animation:slideU .18s ease;}
+  @keyframes slideU{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .strat-card-close{position:absolute;top:.9rem;right:.9rem;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px;line-height:1;padding:2px 8px;border-radius:4px;}
+  .strat-card-close:hover{color:var(--text-primary);background:var(--bg-raised);}
+  .strat-card-type{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem;}
+  .strat-card-title{font-size:17px;font-weight:500;color:var(--text-primary);margin-bottom:.4rem;letter-spacing:-.01em;}
+  .strat-card-ctx{font-size:12.5px;color:var(--text-secondary);margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:0.5px solid var(--border);line-height:1.65;font-style:italic;}
+  .tool-q{font-size:13px;color:var(--text-secondary);margin-bottom:.4rem;margin-top:.9rem;line-height:1.5;}
+  .tool-q:first-of-type{margin-top:0;}
+  .tool-ta{width:100%;background:var(--bg-base);border:0.5px solid var(--border-strong);border-radius:var(--radius-md);padding:8px 10px;font-family:var(--font-sans);font-size:13px;color:var(--text-primary);resize:vertical;min-height:52px;outline:none;line-height:1.5;box-sizing:border-box;}
+  .tool-ta:focus{border-color:var(--border-mid);}
+  .tool-scale{display:flex;gap:5px;flex-wrap:wrap;margin-top:.5rem;}
+  .tool-scale-btn{font-family:var(--font-mono);font-size:11px;padding:4px 9px;border-radius:99px;border:0.5px solid var(--border-strong);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .12s;}
+  .tool-scale-btn.sel{background:var(--bg-raised);color:var(--text-primary);border-color:var(--border-mid);}
+  .tool-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.5rem;}
+  .tool-col-hd{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px;}
+  .tool-btn{margin-top:1.25rem;font-family:var(--font-sans);font-size:13px;padding:9px 18px;border-radius:var(--radius-md);border:0.5px solid var(--border-strong);background:var(--bg-raised);color:var(--text-primary);cursor:pointer;transition:all .15s;width:100%;}
+  .tool-btn:hover{border-color:var(--border-mid);}
+  .tool-out{background:var(--bg-base);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:13px;margin-top:1rem;font-size:13px;color:var(--text-secondary);line-height:1.65;display:none;}
+  .tool-out.show{display:block;animation:slideIn .2s ease;}
+  .tool-out-hd{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:8px;}
+  .tool-out p+p{margin-top:6px;}
+
   /* FOOTER */
   .footer{margin-top:3rem;padding-top:1.25rem;border-top:0.5px solid var(--border);font-size:12px;color:var(--text-muted);line-height:1.6;}
   .footer em{font-style:italic;}
@@ -695,6 +733,187 @@ const E = [
 
 ];
 
+// ── STRATEGY TOOLS ──
+let currentStrats = [];
+const STRAT_LABELS = { naming:'name it', reframing:'reframe', action:'act' };
+
+function categorizeStrategy(text) {
+  const t = text.toLowerCase();
+  if (/\bname (it|what|the)\b|externalize|speak it\b|recognize it\b|notice when you|identify the specific/.test(t)) return 'naming';
+  if (/ask: is this|most likely outcome|challenge the|is it truly|is it absolutely|recall a time|remind yourself you|examine whether|zoom out|distinguish .+ from/.test(t)) return 'reframing';
+  if (/act on it\b|take one concrete|do one small|have the convers|make amends|reach out to one|apologize sincerely|break demands into|ask for help explicitly/.test(t)) return 'action';
+  return null;
+}
+
+function openStrategyCard(strat, cat) {
+  const existing = document.getElementById('stratOverlay');
+  if (existing) existing.remove();
+  const cfgs = {
+    naming: {
+      typeLabel: 'Strategy Type · Naming & Noticing',
+      typeColor: 'rgba(140,180,240,.9)',
+      title: '"Name It" Reflection Tool',
+      tool: buildNamingTool()
+    },
+    reframing: {
+      typeLabel: 'Strategy Type · Reframing & Perspective',
+      typeColor: 'rgba(180,150,230,.9)',
+      title: 'Perspective Shift Worksheet',
+      tool: buildReframingTool()
+    },
+    action: {
+      typeLabel: 'Strategy Type · Concrete Action',
+      typeColor: 'rgba(80,180,150,.9)',
+      title: 'Next Small Step Planner',
+      tool: buildActionTool()
+    }
+  };
+  const cfg = cfgs[cat];
+  const overlay = document.createElement('div');
+  overlay.className = 'strat-overlay';
+  overlay.id = 'stratOverlay';
+  overlay.innerHTML = `<div class="strat-card">
+    <button class="strat-card-close" id="stratClose">&times;</button>
+    <p class="strat-card-type" style="color:${cfg.typeColor}">${cfg.typeLabel}</p>
+    <h2 class="strat-card-title">${cfg.title}</h2>
+    <p class="strat-card-ctx">${strat}</p>
+    ${cfg.tool}
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('stratClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  overlay.querySelectorAll('.tool-scale-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.tool-scale').querySelectorAll('.tool-scale-btn').forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+    });
+  });
+  if (cat === 'naming')    initNamingTool(overlay);
+  if (cat === 'reframing') initReframingTool(overlay);
+  if (cat === 'action')    initActionTool(overlay);
+}
+
+function buildNamingTool() {
+  return `
+    <p class="tool-q">What emotion or state are you experiencing? Try to be as specific as possible.</p>
+    <textarea class="tool-ta" id="tN1" placeholder="e.g. 'low-grade dread about the conversation tomorrow' rather than just 'anxious'…" rows="2"></textarea>
+    <p class="tool-q">What triggered this? What just happened, or what are you anticipating?</p>
+    <textarea class="tool-ta" id="tN2" placeholder="The specific situation or thought that brought this on…" rows="2"></textarea>
+    <p class="tool-q">Where do you feel this in your body right now?</p>
+    <textarea class="tool-ta" id="tN3" placeholder="e.g. tight chest, jaw tension, shallow breath, heaviness…" rows="2"></textarea>
+    <p class="tool-q">How intense is it right now? (1 = barely there, 10 = overwhelming)</p>
+    <div class="tool-scale" id="namingScale">
+      ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="tool-scale-btn" data-val="${n}">${n}</button>`).join('')}
+    </div>
+    <button class="tool-btn" id="namingBtn">Capture this reflection →</button>
+    <div class="tool-out" id="namingOut">
+      <p class="tool-out-hd">Your reflection</p>
+      <div id="namingOutTxt"></div>
+    </div>`;
+}
+
+function initNamingTool(overlay) {
+  overlay.querySelector('#namingBtn').addEventListener('click', () => {
+    const emotion   = overlay.querySelector('#tN1').value.trim();
+    const trigger   = overlay.querySelector('#tN2').value.trim();
+    const body      = overlay.querySelector('#tN3').value.trim();
+    const intensity = overlay.querySelector('.tool-scale-btn.sel')?.dataset.val || '—';
+    if (!emotion && !trigger) { overlay.querySelector('#tN1').focus(); return; }
+    overlay.querySelector('#namingOutTxt').innerHTML =
+      (emotion   ? `<p><strong>Emotion named:</strong> ${emotion}</p>` : '') +
+      (trigger   ? `<p><strong>Trigger:</strong> ${trigger}</p>` : '') +
+      (body      ? `<p><strong>Body signal:</strong> ${body}</p>` : '') +
+      `<p><strong>Intensity:</strong> ${intensity}/10</p>` +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">Naming an emotion reduces its intensity. Research shows labeling activates the prefrontal cortex and damps the amygdala response. You've done the hardest first step.</p>`;
+    const out = overlay.querySelector('#namingOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+function buildReframingTool() {
+  return `
+    <p class="tool-q">What thought, belief, or story are you currently caught in?</p>
+    <textarea class="tool-ta" id="tR1" placeholder="Write it exactly as it sounds in your head, unfiltered…" rows="2"></textarea>
+    <p class="tool-q">Is this absolutely true? What evidence exists against it?</p>
+    <textarea class="tool-ta" id="tR2" placeholder="Evidence that challenges or complicates the thought…" rows="2"></textarea>
+    <p class="tool-q">What is the most realistic outcome — not the worst case?</p>
+    <textarea class="tool-ta" id="tR3" placeholder="The likely scenario if you remove catastrophising from the picture…" rows="2"></textarea>
+    <p class="tool-q">What would you tell a trusted friend who was thinking this?</p>
+    <textarea class="tool-ta" id="tR4" placeholder="Your wisest, most compassionate response to them…" rows="2"></textarea>
+    <button class="tool-btn" id="reframeBtn">Build new perspective →</button>
+    <div class="tool-out" id="reframeOut">
+      <p class="tool-out-hd">Your perspective shift</p>
+      <div id="reframeOutTxt"></div>
+    </div>`;
+}
+
+function initReframingTool(overlay) {
+  overlay.querySelector('#reframeBtn').addEventListener('click', () => {
+    const thought   = overlay.querySelector('#tR1').value.trim();
+    const evidence  = overlay.querySelector('#tR2').value.trim();
+    const realistic = overlay.querySelector('#tR3').value.trim();
+    const advice    = overlay.querySelector('#tR4').value.trim();
+    if (!thought) { overlay.querySelector('#tR1').focus(); return; }
+    overlay.querySelector('#reframeOutTxt').innerHTML =
+      (thought   ? `<p><strong>Original thought:</strong> ${thought}</p>` : '') +
+      (evidence  ? `<p><strong>Counter-evidence:</strong> ${evidence}</p>` : '') +
+      (realistic ? `<p><strong>More realistic view:</strong> ${realistic}</p>` : '') +
+      (advice    ? `<p><strong>What you'd tell a friend:</strong> ${advice}</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">A thought is not a fact. You've begun to see the gap between the two.</p>`;
+    const out = overlay.querySelector('#reframeOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+function buildActionTool() {
+  return `
+    <p class="tool-q">What specifically feels stuck or overwhelming right now?</p>
+    <textarea class="tool-ta" id="tA1" placeholder="Describe the situation as specifically as you can…" rows="2"></textarea>
+    <p class="tool-q">Sort what's in play:</p>
+    <div class="tool-cols">
+      <div>
+        <p class="tool-col-hd">Within my control</p>
+        <textarea class="tool-ta" id="tA2" placeholder="Things I can act on…" rows="4"></textarea>
+      </div>
+      <div>
+        <p class="tool-col-hd">Outside my control</p>
+        <textarea class="tool-ta" id="tA3" placeholder="Things I need to release…" rows="4"></textarea>
+      </div>
+    </div>
+    <p class="tool-q">From the 'within my control' list — what is the one smallest possible next step?</p>
+    <textarea class="tool-ta" id="tA4" placeholder="Small enough that you could do it in the next hour or two…" rows="2"></textarea>
+    <p class="tool-q">When, specifically, will you do this?</p>
+    <textarea class="tool-ta" id="tA5" placeholder="e.g. 'Today at 4pm' or 'Before I sleep tonight'…" rows="1" style="min-height:40px;resize:none;"></textarea>
+    <button class="tool-btn" id="actionBtn">Commit to this step →</button>
+    <div class="tool-out" id="actionOut">
+      <p class="tool-out-hd">Your commitment</p>
+      <div id="actionOutTxt"></div>
+    </div>`;
+}
+
+function initActionTool(overlay) {
+  overlay.querySelector('#actionBtn').addEventListener('click', () => {
+    const situation = overlay.querySelector('#tA1').value.trim();
+    const control   = overlay.querySelector('#tA2').value.trim();
+    const release   = overlay.querySelector('#tA3').value.trim();
+    const step      = overlay.querySelector('#tA4').value.trim();
+    const when      = overlay.querySelector('#tA5').value.trim();
+    if (!step) { overlay.querySelector('#tA4').focus(); return; }
+    overlay.querySelector('#actionOutTxt').innerHTML =
+      (situation ? `<p><strong>Situation:</strong> ${situation}</p>` : '') +
+      (control   ? `<p><strong>Within my control:</strong> ${control}</p>` : '') +
+      (release   ? `<p><strong>Releasing:</strong> ${release}</p>` : '') +
+      `<p><strong>My next step:</strong> ${step}</p>` +
+      (when      ? `<p><strong>When:</strong> ${when}</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">One small step is all you need right now. Action creates momentum — the rest follows from here.</p>`;
+    const out = overlay.querySelector('#actionOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
 // ── RENDER ──
 let activeId = null;
 let activeFilter = "all";
@@ -754,8 +973,8 @@ function showDetail(e) {
         <p class="block-text">${e.signal}</p>
       </div>
       <div class="detail-block strats-block">
-        <p class="block-label strats-label">Effective strategies</p>
-        <ul class="block-text">${e.strats.map(s=>`<li>${s}</li>`).join("")}</ul>
+        <p class="block-label strats-label">Effective strategies <span style="font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;opacity:.45;font-weight:400;margin-left:4px;">· tap badge to open tool</span></p>
+        <ul class="block-text">${e.strats.map((s,i)=>{const cat=categorizeStrategy(s);return cat?`<li class="strat-clickable" data-idx="${i}" data-cat="${cat}">${s}<span class="strat-badge badge-${cat}">${STRAT_LABELS[cat]}</span></li>`:`<li>${s}</li>`;}).join("")}</ul>
       </div>
       <div class="detail-block avoid-block">
         <p class="block-label avoid-label">Common pitfall to avoid</p>
@@ -768,6 +987,10 @@ function showDetail(e) {
     </div>`;
   panel.classList.add("visible");
   panel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  currentStrats = e.strats;
+  panel.querySelectorAll('.strat-clickable').forEach(item => {
+    item.addEventListener('click', () => openStrategyCard(currentStrats[+item.dataset.idx], item.dataset.cat));
+  });
 }
 
 document.getElementById("filters").addEventListener("click", ev => {
