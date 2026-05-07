@@ -41,6 +41,12 @@
   body.light-mode .support-block{border-left-color:rgba(40,120,100,.5);}
   body.light-mode .support-label{color:rgba(30,100,80,.75)!important;}
 
+  /* SEARCH */
+  .search-wrap{margin-bottom:1rem;}
+  .search-input{width:100%;max-width:340px;background:var(--bg-surface);border:0.5px solid var(--border-strong);border-radius:var(--radius-md);padding:8px 14px;font-family:var(--font-sans);font-size:13px;color:var(--text-primary);outline:none;transition:border-color .15s;}
+  .search-input::placeholder{color:var(--text-muted);}
+  .search-input:focus{border-color:var(--border-mid);}
+
   /* FILTERS */
   .filter-wrap{margin-bottom:1.5rem;}
   .filter-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
@@ -115,6 +121,10 @@
       <span id="themeLabel">Light</span>
       <div class="toggle-track"><div class="toggle-thumb"></div></div>
     </button>
+  </div>
+
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="search" placeholder="Search emotions…" aria-label="Search emotions">
   </div>
 
   <div class="filter-wrap">
@@ -675,14 +685,19 @@ const E = [
 
 // ── RENDER ──
 let activeId = null;
+let activeFilter = "all";
 
-function renderCards(filter) {
+function renderCards(filter, search) {
+  if (filter !== undefined) activeFilter = filter;
+  const query = (search !== undefined ? search : document.getElementById("searchInput").value).trim().toLowerCase();
   const grid = document.getElementById("grid");
   const detail = document.getElementById("detail");
   activeId = null;
   detail.classList.remove("visible");
   detail.innerHTML = "";
-  const list = filter === "all" ? E : E.filter(e => e.cat === filter);
+  let list = activeFilter === "all" ? E : E.filter(e => e.cat === activeFilter);
+  if (query) list = list.filter(e => e.name.toLowerCase().includes(query));
+  list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
   grid.innerHTML = list.map(e => `
     <button class="emo-card" data-id="${e.id}" style="border-color:${e.color}25;">
       <div class="emo-accent" style="background:${e.color};"></div>
@@ -751,7 +766,11 @@ document.getElementById("filters").addEventListener("click", ev => {
   renderCards(btn.dataset.filter);
 });
 
-renderCards("all");
+document.getElementById("searchInput").addEventListener("input", () => {
+  renderCards();
+});
+
+renderCards("all", "");
 
 // ── THEME TOGGLE ──
 const toggle = document.getElementById("themeToggle");
