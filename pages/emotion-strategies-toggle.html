@@ -113,6 +113,14 @@
   body.light-mode .badge-self-compassion{background:rgba(170,60,80,.1);color:rgba(150,40,60,.85);}
   body.light-mode .badge-connection{background:rgba(20,120,110,.1);color:rgba(20,110,100,.85);}
   body.light-mode .badge-values{background:rgba(140,100,10,.1);color:rgba(130,90,10,.85);}
+  .badge-mindfulness{background:rgba(100,130,180,.18);color:rgba(130,160,210,.95);}
+  .badge-boundaries{background:rgba(210,120,90,.18);color:rgba(230,145,115,.95);}
+  .badge-professional{background:rgba(140,100,180,.18);color:rgba(165,130,205,.95);}
+  .badge-gratitude{background:rgba(80,170,100,.18);color:rgba(100,195,125,.95);}
+  body.light-mode .badge-mindfulness{background:rgba(50,80,140,.1);color:rgba(50,80,140,.85);}
+  body.light-mode .badge-boundaries{background:rgba(160,70,40,.1);color:rgba(150,60,30,.85);}
+  body.light-mode .badge-professional{background:rgba(90,50,140,.1);color:rgba(90,50,140,.85);}
+  body.light-mode .badge-gratitude{background:rgba(30,120,50,.1);color:rgba(30,120,50,.85);}
 
   /* STRATEGY MODAL */
   .strat-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:900;display:flex;align-items:center;justify-content:center;padding:1.5rem;animation:fadeO .15s ease;}
@@ -139,6 +147,20 @@
   .tool-out.show{display:block;animation:slideIn .2s ease;}
   .tool-out-hd{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin-bottom:8px;}
   .tool-out p+p{margin-top:6px;}
+
+  /* TOOLBOX */
+  .toolbox{margin:2rem 0 1.5rem;padding-top:1.5rem;border-top:0.5px solid var(--border);}
+  .toolbox-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem;gap:1rem;}
+  .toolbox-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px;}
+  .toolbox-sub{font-size:12px;color:var(--text-muted);}
+  .toolbox-toggle{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:none;border:0.5px solid var(--border-strong);color:var(--text-muted);padding:4px 10px;border-radius:99px;cursor:pointer;transition:all .15s;flex-shrink:0;}
+  .toolbox-toggle:hover{color:var(--text-primary);border-color:var(--border-mid);}
+  .toolbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:8px;}
+  .toolbox-grid[hidden]{display:none;}
+  .toolbox-card{background:var(--bg-surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:12px 13px 13px;text-align:left;cursor:pointer;transition:transform .12s,background .12s,border-color .15s;font-family:var(--font-sans);}
+  .toolbox-card:hover{background:var(--bg-raised);transform:translateY(-2px);}
+  .toolbox-card-title{font-size:12.5px;font-weight:500;color:var(--text-primary);margin:6px 0 3px;line-height:1.3;}
+  .toolbox-card-desc{font-size:11.5px;color:var(--text-secondary);line-height:1.4;}
 
   /* FOOTER */
   .footer{margin-top:3rem;padding-top:1.25rem;border-top:0.5px solid var(--border);font-size:12px;color:var(--text-muted);line-height:1.6;}
@@ -193,6 +215,17 @@
 
   <div class="emo-grid" id="grid"></div>
   <div class="detail-panel" id="detail"></div>
+
+  <section class="toolbox" id="toolbox">
+    <div class="toolbox-hd">
+      <div>
+        <p class="toolbox-eyebrow">Strategy Toolbox</p>
+        <p class="toolbox-sub">Open any tool directly — no emotion card required.</p>
+      </div>
+      <button class="toolbox-toggle" id="toolboxToggle">Hide ▴</button>
+    </div>
+    <div class="toolbox-grid" id="toolboxGrid"></div>
+  </section>
 
   <footer class="footer">
     Based on <em>Atlas of the Heart</em> by Brené Brown (2021). Emotions are signals, not commands. Language is the first step toward understanding.
@@ -741,7 +774,20 @@ const E = [
 
 // ── STRATEGY TOOLS ──
 let currentStrats = [];
-const STRAT_LABELS = { naming:'name it', reframing:'reframe', action:'act', 'self-compassion':'be kind', connection:'connect', values:'values' };
+const STRAT_LABELS = { naming:'name it', reframing:'reframe', action:'act', 'self-compassion':'be kind', connection:'connect', values:'values', mindfulness:'pause', boundaries:'boundary', professional:'get support', gratitude:'gratitude' };
+
+const TOOL_CFGS = {
+  naming:         { typeLabel:'Strategy Type · Naming & Noticing',      typeColor:'rgba(140,180,240,.9)', title:'"Name It" Reflection Tool',     desc:'Label emotions precisely to reduce their intensity.',          build:buildNamingTool },
+  reframing:      { typeLabel:'Strategy Type · Reframing & Perspective', typeColor:'rgba(180,150,230,.9)', title:'Perspective Shift Worksheet',    desc:'Question assumptions and shift your perspective.',             build:buildReframingTool },
+  action:         { typeLabel:'Strategy Type · Concrete Action',         typeColor:'rgba(80,180,150,.9)',  title:'Next Small Step Planner',         desc:'Break through stuck feelings with one concrete step.',         build:buildActionTool },
+  'self-compassion':{ typeLabel:'Strategy Type · Self-Compassion & Care',typeColor:'rgba(240,155,165,.9)', title:'Self-Compassion Check-In',        desc:"Extend the care you'd give a friend to yourself.",            build:buildSelfCompassionTool },
+  connection:     { typeLabel:'Strategy Type · Seeking Connection',      typeColor:'rgba(80,195,185,.9)',  title:'Connection Prompt',               desc:'Identify who can help and what to say to reach out.',          build:buildConnectionTool },
+  values:         { typeLabel:'Strategy Type · Values Clarification',    typeColor:'rgba(225,185,80,.9)',  title:'Values Compass',                  desc:'Name what matters and how to act in line with it.',            build:buildValuesTool },
+  mindfulness:    { typeLabel:'Strategy Type · Mindfulness & Presence',  typeColor:'rgba(130,160,210,.9)', title:'Pause & Ground Exercise',         desc:'Breathe, orient to the present, find one steady thing.',       build:buildMindfulnessTool },
+  boundaries:     { typeLabel:'Strategy Type · Boundary Setting',        typeColor:'rgba(230,145,115,.9)', title:'Boundary Clarity Worksheet',      desc:'Clarify your limits and find the words to express them.',      build:buildBoundariesTool },
+  professional:   { typeLabel:'Strategy Type · Professional Support',    typeColor:'rgba(165,130,205,.9)', title:'Support Resource Guide',          desc:'Find the right kind of support for sustained difficulty.',     build:buildProfessionalTool },
+  gratitude:      { typeLabel:'Strategy Type · Gratitude Practice',      typeColor:'rgba(100,195,125,.9)', title:'Specific Gratitude Practice',     desc:'Practice specific, meaningful gratitude — not generic.',       build:buildGratitudeTool }
+};
 
 function categorizeStrategy(text) {
   const t = text.toLowerCase();
@@ -751,51 +797,17 @@ function categorizeStrategy(text) {
   if (/attend to basic|self-compassion|be gentle with yourself|practice self-forgiv|forgive yourself|self-love/.test(t)) return 'self-compassion';
   if (/do not face it alone|seek comfort in|seek people who|share it\b|share something real/.test(t)) return 'connection';
   if (/what you value|your own values|maps your.*values|values clarification|clarify your values/.test(t)) return 'values';
+  if (/pause before (reacting|acting)|stay with (it|confusion)|savor it|let yourself (be small|fully exhale)|slow down and let/.test(t)) return 'mindfulness';
+  if (/know your limits|'no' is a complete|hold your limits|what boundary have i not set/.test(t)) return 'boundaries';
+  if (/professional support|work with a professional/.test(t)) return 'professional';
+  if (/name three specific|antidote to foreboding|make it a deliberate practice/.test(t)) return 'gratitude';
   return null;
 }
 
 function openStrategyCard(strat, cat) {
   const existing = document.getElementById('stratOverlay');
   if (existing) existing.remove();
-  const cfgs = {
-    naming: {
-      typeLabel: 'Strategy Type · Naming & Noticing',
-      typeColor: 'rgba(140,180,240,.9)',
-      title: '"Name It" Reflection Tool',
-      tool: buildNamingTool()
-    },
-    reframing: {
-      typeLabel: 'Strategy Type · Reframing & Perspective',
-      typeColor: 'rgba(180,150,230,.9)',
-      title: 'Perspective Shift Worksheet',
-      tool: buildReframingTool()
-    },
-    action: {
-      typeLabel: 'Strategy Type · Concrete Action',
-      typeColor: 'rgba(80,180,150,.9)',
-      title: 'Next Small Step Planner',
-      tool: buildActionTool()
-    },
-    'self-compassion': {
-      typeLabel: 'Strategy Type · Self-Compassion & Care',
-      typeColor: 'rgba(240,155,165,.9)',
-      title: 'Self-Compassion Check-In',
-      tool: buildSelfCompassionTool()
-    },
-    connection: {
-      typeLabel: 'Strategy Type · Seeking Connection',
-      typeColor: 'rgba(80,195,185,.9)',
-      title: 'Connection Prompt',
-      tool: buildConnectionTool()
-    },
-    values: {
-      typeLabel: 'Strategy Type · Values Clarification',
-      typeColor: 'rgba(225,185,80,.9)',
-      title: 'Values Compass',
-      tool: buildValuesTool()
-    }
-  };
-  const cfg = cfgs[cat];
+  const cfg = TOOL_CFGS[cat];
   const overlay = document.createElement('div');
   overlay.className = 'strat-overlay';
   overlay.id = 'stratOverlay';
@@ -803,8 +815,8 @@ function openStrategyCard(strat, cat) {
     <button class="strat-card-close" id="stratClose">&times;</button>
     <p class="strat-card-type" style="color:${cfg.typeColor}">${cfg.typeLabel}</p>
     <h2 class="strat-card-title">${cfg.title}</h2>
-    <p class="strat-card-ctx">${strat}</p>
-    ${cfg.tool}
+    ${strat ? `<p class="strat-card-ctx">${strat}</p>` : ''}
+    ${cfg.build()}
   </div>`;
   document.body.appendChild(overlay);
   document.getElementById('stratClose').addEventListener('click', () => overlay.remove());
@@ -821,6 +833,10 @@ function openStrategyCard(strat, cat) {
   if (cat === 'self-compassion')  initSelfCompassionTool(overlay);
   if (cat === 'connection')       initConnectionTool(overlay);
   if (cat === 'values')           initValuesTool(overlay);
+  if (cat === 'mindfulness')      initMindfulnessTool(overlay);
+  if (cat === 'boundaries')       initBoundariesTool(overlay);
+  if (cat === 'professional')     initProfessionalTool(overlay);
+  if (cat === 'gratitude')        initGratitudeTool(overlay);
 }
 
 function buildNamingTool() {
@@ -1046,6 +1062,173 @@ function initValuesTool(overlay) {
   });
 }
 
+function buildMindfulnessTool() {
+  return `
+    <p class="tool-q">Step 1 — Take three slow breaths. Feel the weight of your body and your feet on the floor.</p>
+    <div class="tool-scale" style="margin-bottom:.75rem;">
+      <button class="tool-scale-btn" data-val="done">Done — I've taken three breaths ✓</button>
+    </div>
+    <p class="tool-q">Step 2 — Name five things you can see right now.</p>
+    <textarea class="tool-ta" id="tMnd1" placeholder="1. …   2. …   3. …   4. …   5. …" rows="3"></textarea>
+    <p class="tool-q">Step 3 — What is one thing that is okay right now, even if small?</p>
+    <textarea class="tool-ta" id="tMnd2" placeholder="It doesn't have to be big or meaningful — just true…" rows="2"></textarea>
+    <button class="tool-btn" id="mndBtn">Complete grounding →</button>
+    <div class="tool-out" id="mndOut">
+      <p class="tool-out-hd">Grounding summary</p>
+      <div id="mndOutTxt"></div>
+    </div>`;
+}
+
+function initMindfulnessTool(overlay) {
+  overlay.querySelector('#mndBtn').addEventListener('click', () => {
+    const sees     = overlay.querySelector('#tMnd1').value.trim();
+    const okay     = overlay.querySelector('#tMnd2').value.trim();
+    if (!okay) { overlay.querySelector('#tMnd2').focus(); return; }
+    const breathed = overlay.querySelector('.tool-scale-btn.sel') ? 'Yes' : 'Skipped';
+    overlay.querySelector('#mndOutTxt').innerHTML =
+      `<p><strong>Breathed:</strong> ${breathed}</p>` +
+      (sees ? `<p><strong>What I can see:</strong> ${sees}</p>` : '') +
+      `<p><strong>One okay thing:</strong> ${okay}</p>` +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">The nervous system needs around 20 minutes to fully regulate after activation. You've started that process. There's nothing else required right now.</p>`;
+    const out = overlay.querySelector('#mndOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+function buildBoundariesTool() {
+  return `
+    <p class="tool-q">What situation or relationship needs a boundary right now?</p>
+    <textarea class="tool-ta" id="tBnd1" placeholder="Describe the context…" rows="2"></textarea>
+    <p class="tool-q">What specifically is not okay with you? (The limit itself.)</p>
+    <textarea class="tool-ta" id="tBnd2" placeholder="e.g. 'Being asked to take on work outside my role without discussion'…" rows="2"></textarea>
+    <p class="tool-q">What would you like to happen instead?</p>
+    <textarea class="tool-ta" id="tBnd3" placeholder="The positive request that goes alongside the boundary…" rows="2"></textarea>
+    <p class="tool-q">Draft what you'd say to communicate this clearly and kindly:</p>
+    <textarea class="tool-ta" id="tBnd4" placeholder="Starting with 'I' rather than 'you' usually helps…" rows="3"></textarea>
+    <button class="tool-btn" id="bndBtn">Capture my boundary statement →</button>
+    <div class="tool-out" id="bndOut">
+      <p class="tool-out-hd">Your boundary statement</p>
+      <div id="bndOutTxt"></div>
+    </div>`;
+}
+
+function initBoundariesTool(overlay) {
+  overlay.querySelector('#bndBtn').addEventListener('click', () => {
+    const situation = overlay.querySelector('#tBnd1').value.trim();
+    const limit     = overlay.querySelector('#tBnd2').value.trim();
+    const instead   = overlay.querySelector('#tBnd3').value.trim();
+    const draft     = overlay.querySelector('#tBnd4').value.trim();
+    if (!limit) { overlay.querySelector('#tBnd2').focus(); return; }
+    overlay.querySelector('#bndOutTxt').innerHTML =
+      (situation ? `<p><strong>Situation:</strong> ${situation}</p>` : '') +
+      `<p><strong>What's not okay:</strong> ${limit}</p>` +
+      (instead ? `<p><strong>What I want instead:</strong> ${instead}</p>` : '') +
+      (draft   ? `<p><strong>How I'll say it:</strong> ${draft}</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">A boundary is a statement about what you will or won't do — not a demand that others change. Clarity and kindness can coexist.</p>`;
+    const out = overlay.querySelector('#bndOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+const PROF_INFO = {
+  therapy:  { label:'Therapy & Counselling',   text:"A trained therapist provides a private, structured space to work through sustained difficulty. Effective for anxiety, depression, grief, trauma, and relationship patterns. Search for licensed therapists in your area or through your employer's EAP." },
+  peer:     { label:'Peer Support Groups',      text:'Groups of people with shared experiences — in person or online. Particularly powerful for grief, addiction, chronic illness, and major transitions. Can powerfully reduce the isolation of feeling like you\'re the only one facing this.' },
+  crisis:   { label:'Crisis Lines',             text:'Free, confidential, immediate support available 24/7 by phone or text. If you are in acute distress or having thoughts of self-harm, please reach out now. Search for your country\'s crisis line — they exist specifically for this.' },
+  mentor:   { label:'Trusted Mentor or Friend', text:"Sometimes what's needed is a specific person who has navigated something similar. Not a replacement for professional support in serious cases, but a vital source of perspective and sustained hope." },
+  gp:       { label:'GP or Doctor',             text:'Mental and physical health are deeply connected. Sleep, nutrition, exercise, and medication (when appropriate) are all legitimate parts of the picture. A GP can also refer you onward and assess whether something physical is contributing.' }
+};
+
+function buildProfessionalTool() {
+  return `
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:.75rem;">Reaching for professional support is not weakness — it is one of the most effective strategies available for sustained emotional difficulty. The research is clear: connection and professional guidance work.</p>
+    <p class="tool-q">What kind of support might fit right now?</p>
+    <div class="tool-scale" id="profScale">
+      <button class="tool-scale-btn" data-val="therapy">therapy / counselling</button>
+      <button class="tool-scale-btn" data-val="peer">peer support</button>
+      <button class="tool-scale-btn" data-val="crisis">crisis line</button>
+      <button class="tool-scale-btn" data-val="mentor">mentor / friend</button>
+      <button class="tool-scale-btn" data-val="gp">GP / doctor</button>
+    </div>
+    <div class="tool-out show" id="profOut" style="margin-top:.75rem;">
+      <p class="tool-out-hd">You don't have to earn the right to ask for help.</p>
+      <div id="profDetail"><p style="font-style:italic;color:var(--text-muted)">Select a support type above to learn more about it.</p></div>
+    </div>`;
+}
+
+function initProfessionalTool(overlay) {
+  overlay.querySelectorAll('#profScale .tool-scale-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const info = PROF_INFO[btn.dataset.val];
+      overlay.querySelector('#profDetail').innerHTML =
+        `<p><strong>${info.label}</strong></p><p style="margin-top:5px">${info.text}</p>`;
+    });
+  });
+}
+
+function buildGratitudeTool() {
+  return `
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:.5rem;">Brown's research: people who experience the most joy practice gratitude <em>specifically</em> — naming particular things rather than generic appreciation. Generic gratitude doesn't carry the same effect.</p>
+    <p class="tool-q">Name one specific thing you're grateful for right now. (Particular, not general.)</p>
+    <textarea class="tool-ta" id="tGrt1" placeholder="e.g. 'The way she laughed at dinner last night' — not just 'my family'…" rows="2"></textarea>
+    <p class="tool-q">What specifically about it are you grateful for?</p>
+    <textarea class="tool-ta" id="tGrt2" placeholder="Dig into the detail — what makes this particular thing meaningful?…" rows="2"></textarea>
+    <p class="tool-q">Is there a person involved? What would you want them to know?</p>
+    <textarea class="tool-ta" id="tGrt3" placeholder="Optional — you don't have to send it, but writing it deepens the practice…" rows="2"></textarea>
+    <button class="tool-btn" id="grtBtn">Capture this gratitude →</button>
+    <div class="tool-out" id="grtOut">
+      <p class="tool-out-hd">Your gratitude note</p>
+      <div id="grtOutTxt"></div>
+    </div>`;
+}
+
+function initGratitudeTool(overlay) {
+  overlay.querySelector('#grtBtn').addEventListener('click', () => {
+    const thing  = overlay.querySelector('#tGrt1').value.trim();
+    const why    = overlay.querySelector('#tGrt2').value.trim();
+    const person = overlay.querySelector('#tGrt3').value.trim();
+    if (!thing) { overlay.querySelector('#tGrt1').focus(); return; }
+    overlay.querySelector('#grtOutTxt').innerHTML =
+      `<p><strong>What I'm grateful for:</strong> ${thing}</p>` +
+      (why    ? `<p><strong>Why it matters:</strong> ${why}</p>` : '') +
+      (person ? `<p><strong>What I'd want them to know:</strong> ${person}</p>` : '') +
+      `<p style="margin-top:10px;font-style:italic;color:var(--text-muted)">Specific gratitude changes the brain in measurable ways. You've just practised it. If there's a person involved, consider sharing this with them — expressed gratitude is one of the strongest connectors we have.</p>`;
+    const out = overlay.querySelector('#grtOut');
+    out.classList.add('show');
+    out.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+}
+
+// ── TOOLBOX ──
+const TOOLBOX_ORDER = ['naming','reframing','action','self-compassion','connection','values','mindfulness','boundaries','professional','gratitude'];
+
+function renderToolbox() {
+  const grid = document.getElementById('toolboxGrid');
+  grid.innerHTML = TOOLBOX_ORDER.map(key => {
+    const cfg = TOOL_CFGS[key];
+    return `<button class="toolbox-card" data-cat="${key}">
+      <span class="strat-badge badge-${key}" style="opacity:.9">${STRAT_LABELS[key]}</span>
+      <p class="toolbox-card-title">${cfg.title}</p>
+      <p class="toolbox-card-desc">${cfg.desc}</p>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.toolbox-card').forEach(card => {
+    card.addEventListener('click', () => openStrategyCard('', card.dataset.cat));
+  });
+  document.getElementById('toolboxToggle').addEventListener('click', () => {
+    const g = document.getElementById('toolboxGrid');
+    const btn = document.getElementById('toolboxToggle');
+    if (g.hasAttribute('hidden')) {
+      g.removeAttribute('hidden');
+      btn.textContent = 'Hide ▴';
+    } else {
+      g.setAttribute('hidden', '');
+      btn.textContent = 'Show ▾';
+    }
+  });
+}
+
 // ── RENDER ──
 let activeId = null;
 let activeFilter = "all";
@@ -1138,6 +1321,7 @@ document.getElementById("searchInput").addEventListener("input", () => {
 });
 
 renderCards("all", "");
+renderToolbox();
 
 // ── THEME TOGGLE ──
 const toggle = document.getElementById("themeToggle");
